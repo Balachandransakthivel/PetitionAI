@@ -8,7 +8,9 @@ function loadNotifications(): Notification[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch (err) {
+    console.error("Error loading notifications from localStorage:", err);
+  }
   return MOCK_NOTIFICATIONS;
 }
 

@@ -170,8 +170,8 @@ export default function LandingPage() {
             <Shield className="w-5 h-5 text-gold-400" />
             <span className="font-serif font-bold text-white">PetitionAI</span>
           </div>
-          <p className="text-sm text-center">Intelligent Petition Classification & Resolution · BE CSE Mini Project · 2024</p>
-          <p className="text-xs text-navy-500">Team: Akashresi S · Arun K · Balachandran S</p>
+          <p className="text-sm text-center">Intelligent Petition Classification & Resolution System</p>
+          <p className="text-xs text-navy-500">© {new Date().getFullYear()} PetitionAI. All rights reserved.</p>
         </div>
       </footer>
     </div>

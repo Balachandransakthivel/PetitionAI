@@ -43,9 +43,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to={user ? `/${user.role}/dashboard` : "/"} className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-gold-400 rounded-md flex items-center justify-center">
-              <Shield className="w-5 h-5 text-navy-900" />
-            </div>
+            <img src="/favicon.png" alt="PetitionAI Logo" className="w-8 h-8 rounded-md object-cover border border-gold-400/40 shadow-sm" />
             <div className="leading-tight">
               <div className="text-white font-serif font-bold text-base leading-none">PetitionAI</div>
               <div className="text-navy-300 text-[10px] leading-tight tracking-wide uppercase">Citizen Grievance Portal</div>

@@ -34,7 +34,8 @@ export function getStoredUser(): User | null {
   try {
     const raw = localStorage.getItem("petition_ai_user");
     return raw ? JSON.parse(raw) : null;
-  } catch {
+  } catch (err) {
+    console.error("Error reading user from localStorage:", err);
     return null;
   }
 }

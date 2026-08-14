@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ComplaintStatus, Priority, Sentiment, AIAnalysis } from "@/types";
-import { CATEGORIES, DEPARTMENTS } from "@/constants/mockData";
+import { ComplaintStatus, Priority, Sentiment } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -103,67 +102,4 @@ export function confidenceBar(score: number): string {
   return "bg-red-500";
 }
 
-export function generateAIAnalysis(title: string, description: string, category: string): AIAnalysis {
-  const text = `${title} ${description}`.toLowerCase();
-
-  const angryWords = ["angry", "furious", "unacceptable", "terrible", "worst", "disgusting", "outrageous", "frustrated"];
-  const negativeWords = ["bad", "poor", "issue", "problem", "complaint", "broken", "damaged", "fail", "missing", "blocked"];
-  const positiveWords = ["please", "kindly", "request", "hope", "appreciate", "grateful"];
-
-  let sentiment: "positive" | "neutral" | "negative" | "angry" = "neutral";
-  let sentimentScore = 0.5;
-  if (angryWords.some(w => text.includes(w))) { sentiment = "angry"; sentimentScore = 0.15; }
-  else if (negativeWords.filter(w => text.includes(w)).length >= 2) { sentiment = "negative"; sentimentScore = 0.3; }
-  else if (positiveWords.some(w => text.includes(w))) { sentiment = "positive"; sentimentScore = 0.75; }
-
-  const criticalWords = ["accident", "emergency", "danger", "death", "flood", "fire", "collapse", "sewage overflow"];
-  const highWords = ["broken", "leaking", "no water", "no electricity", "pothole", "blocked drain"];
-  let priority: "critical" | "high" | "medium" | "low" = "medium";
-  let priorityScore = 0.5;
-  if (criticalWords.some(w => text.includes(w))) { priority = "critical"; priorityScore = 0.95; }
-  else if (highWords.some(w => text.includes(w))) { priority = "high"; priorityScore = 0.75; }
-  else if (text.length < 50) { priority = "low"; priorityScore = 0.25; }
-
-  const deptMap: Record<string, string> = {
-    "Road & Infrastructure": "Roads & Infrastructure",
-    "Building & Construction": "Roads & Infrastructure",
-    "Water Supply": "Water Works",
-    "Sanitation": "Waste Management",
-    "Electricity": "Electricity Board",
-    "Waste Management": "Waste Management",
-    "Parks & Recreation": "Waste Management",
-    "Noise Pollution": "Public Safety",
-    "Public Safety": "Public Safety",
-    "Healthcare": "Health Department",
-    "Education": "Education Department",
-    "Public Transport": "Transport Authority",
-  };
-
-  const words = text.split(/\s+/).filter(w => w.length > 5);
-  const keywords = [...new Set(words)].slice(0, 6);
-
-  const catConf = 0.85 + Math.random() * 0.12;
-  const deptConf = 0.80 + Math.random() * 0.15;
-  const isDuplicate = Math.random() > 0.7;
-
-  const similarComplaints = isDuplicate ? [
-    { id: `PET-${new Date().getFullYear()}-${Math.floor(Math.random() * 900) + 100}`, title: `Similar ${category} complaint nearby`, similarity: 0.72 + Math.random() * 0.2, status: "in_progress" as const },
-  ] : [];
-
-  return {
-    category,
-    categoryConfidence: catConf,
-    department: deptMap[category] || "Roads & Infrastructure",
-    departmentConfidence: deptConf,
-    priority,
-    priorityScore,
-    sentiment,
-    sentimentScore,
-    isDuplicate,
-    duplicateCount: isDuplicate ? Math.floor(Math.random() * 3) + 1 : 0,
-    similarComplaints,
-    urgencyLevel: priority,
-    keywords: keywords.length > 0 ? keywords : ["complaint", "repair", "service"],
-    summaryNote: `AI classified this as ${category} with ${Math.round(catConf * 100)}% confidence. Routed to ${deptMap[category] || "Roads & Infrastructure"}. Priority: ${priority.toUpperCase()}. ${isDuplicate ? "⚠️ Similar complaints found." : "No duplicates detected."}`,
-  };
-}
+export { generateAIAnalysis } from "./ai";

@@ -8,7 +8,9 @@ function loadComplaints(): Complaint[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch (err) {
+    console.error("Error loading complaints from localStorage:", err);
+  }
   return MOCK_COMPLAINTS;
 }
 
