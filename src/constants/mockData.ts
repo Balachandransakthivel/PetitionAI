@@ -1,0 +1,446 @@
+import { User, Complaint, Department, Officer, Notification, AnalyticsData, AIAnalysis } from "@/types";
+
+// ── Mock Users ─────────────────────────────────────────────────────────────────
+export const MOCK_USERS: User[] = [
+  {
+    id: "u1",
+    name: "Akash Rajan",
+    email: "citizen@demo.com",
+    role: "citizen",
+    phone: "+91 98765 43210",
+    address: "12, Gandhi Nagar, Coimbatore - 641001",
+    joinedAt: "2024-03-15",
+  },
+  {
+    id: "u2",
+    name: "Priya Suresh",
+    email: "officer@demo.com",
+    role: "officer",
+    phone: "+91 87654 32109",
+    department: "Roads & Infrastructure",
+    joinedAt: "2023-08-20",
+  },
+  {
+    id: "u3",
+    name: "Admin Rajesh",
+    email: "admin@demo.com",
+    role: "admin",
+    phone: "+91 76543 21098",
+    joinedAt: "2022-01-10",
+  },
+];
+
+// ── Categories & Departments ────────────────────────────────────────────────────
+export const CATEGORIES = [
+  "Road & Infrastructure",
+  "Water Supply",
+  "Electricity",
+  "Waste Management",
+  "Noise Pollution",
+  "Building & Construction",
+  "Public Safety",
+  "Healthcare",
+  "Education",
+  "Public Transport",
+  "Sanitation",
+  "Parks & Recreation",
+];
+
+export const DEPARTMENTS: Department[] = [
+  { id: "d1", name: "Roads & Infrastructure", code: "PWD", head: "Eng. Murugan K", officerCount: 8, pendingCount: 12, resolvedCount: 89, categories: ["Road & Infrastructure", "Building & Construction"] },
+  { id: "d2", name: "Water Works", code: "WW", head: "Eng. Sundar P", officerCount: 5, pendingCount: 7, resolvedCount: 62, categories: ["Water Supply", "Sanitation"] },
+  { id: "d3", name: "Electricity Board", code: "EB", head: "Eng. Karthik R", officerCount: 6, pendingCount: 9, resolvedCount: 74, categories: ["Electricity"] },
+  { id: "d4", name: "Waste Management", code: "WM", head: "Mr. Senthil A", officerCount: 10, pendingCount: 15, resolvedCount: 103, categories: ["Waste Management", "Sanitation", "Parks & Recreation"] },
+  { id: "d5", name: "Public Safety", code: "PS", head: "Insp. Kavitha M", officerCount: 7, pendingCount: 5, resolvedCount: 48, categories: ["Public Safety", "Noise Pollution"] },
+  { id: "d6", name: "Health Department", code: "HD", head: "Dr. Anitha S", officerCount: 4, pendingCount: 4, resolvedCount: 31, categories: ["Healthcare"] },
+  { id: "d7", name: "Education Department", code: "ED", head: "Ms. Meena V", officerCount: 3, pendingCount: 3, resolvedCount: 22, categories: ["Education"] },
+  { id: "d8", name: "Transport Authority", code: "TA", head: "Mr. Raja K", officerCount: 5, pendingCount: 6, resolvedCount: 41, categories: ["Public Transport"] },
+];
+
+export const OFFICERS: Officer[] = [
+  { id: "o1", name: "Priya Suresh", email: "officer@demo.com", department: "Roads & Infrastructure", assignedCount: 8, resolvedCount: 42, rating: 4.5, joinedAt: "2023-08-20" },
+  { id: "o2", name: "Venkat Kumar", email: "venkat@demo.com", department: "Water Works", assignedCount: 5, resolvedCount: 31, rating: 4.2, joinedAt: "2023-05-10" },
+  { id: "o3", name: "Rekha Devi", email: "rekha@demo.com", department: "Electricity Board", assignedCount: 6, resolvedCount: 28, rating: 4.7, joinedAt: "2022-11-15" },
+  { id: "o4", name: "Arun Prasad", email: "arun@demo.com", department: "Waste Management", assignedCount: 10, resolvedCount: 55, rating: 4.0, joinedAt: "2023-01-20" },
+  { id: "o5", name: "Kavitha Raj", email: "kavitha@demo.com", department: "Public Safety", assignedCount: 4, resolvedCount: 19, rating: 4.8, joinedAt: "2024-02-08" },
+];
+
+// ── AI Classification Engine (Mock) ────────────────────────────────────────────
+export function generateAIAnalysis(title: string, description: string, category: string): AIAnalysis {
+  const text = `${title} ${description}`.toLowerCase();
+
+  // Sentiment detection
+  const angryWords = ["angry", "furious", "unacceptable", "terrible", "worst", "disgusting", "outrageous", "frustrated"];
+  const negativeWords = ["bad", "poor", "issue", "problem", "complaint", "broken", "damaged", "fail", "missing", "blocked"];
+  const positiveWords = ["please", "kindly", "request", "hope", "appreciate", "grateful"];
+  let sentiment: "positive" | "neutral" | "negative" | "angry" = "neutral";
+  let sentimentScore = 0.5;
+  if (angryWords.some(w => text.includes(w))) { sentiment = "angry"; sentimentScore = 0.15; }
+  else if (negativeWords.filter(w => text.includes(w)).length >= 2) { sentiment = "negative"; sentimentScore = 0.3; }
+  else if (positiveWords.some(w => text.includes(w))) { sentiment = "positive"; sentimentScore = 0.75; }
+
+  // Priority detection
+  const criticalWords = ["accident", "emergency", "danger", "death", "flood", "fire", "collapse", "sewage overflow"];
+  const highWords = ["broken", "leaking", "no water", "no electricity", "pothole", "blocked drain"];
+  let priority: "critical" | "high" | "medium" | "low" = "medium";
+  let priorityScore = 0.5;
+  if (criticalWords.some(w => text.includes(w))) { priority = "critical"; priorityScore = 0.95; }
+  else if (highWords.some(w => text.includes(w))) { priority = "high"; priorityScore = 0.75; }
+  else if (text.length < 50) { priority = "low"; priorityScore = 0.25; }
+
+  // Department mapping
+  const deptMap: Record<string, string> = {
+    "Road & Infrastructure": "Roads & Infrastructure",
+    "Building & Construction": "Roads & Infrastructure",
+    "Water Supply": "Water Works",
+    "Sanitation": "Waste Management",
+    "Electricity": "Electricity Board",
+    "Waste Management": "Waste Management",
+    "Parks & Recreation": "Waste Management",
+    "Noise Pollution": "Public Safety",
+    "Public Safety": "Public Safety",
+    "Healthcare": "Health Department",
+    "Education": "Education Department",
+    "Public Transport": "Transport Authority",
+  };
+
+  const keywords = text.split(" ").filter(w => w.length > 5).slice(0, 6);
+
+  const similarComplaints = [
+    { id: "PET-2024-089", title: "Road pothole near market area", similarity: 0.87, status: "in_progress" as const },
+    { id: "PET-2024-045", title: "Similar infrastructure complaint", similarity: 0.72, status: "resolved" as const },
+  ];
+
+  return {
+    category,
+    categoryConfidence: 0.88 + Math.random() * 0.1,
+    department: deptMap[category] || "Roads & Infrastructure",
+    departmentConfidence: 0.82 + Math.random() * 0.12,
+    priority,
+    priorityScore,
+    sentiment,
+    sentimentScore,
+    isDuplicate: Math.random() > 0.75,
+    duplicateCount: Math.floor(Math.random() * 3),
+    similarComplaints: Math.random() > 0.4 ? similarComplaints : [],
+    urgencyLevel: priority,
+    keywords: keywords.length > 0 ? keywords : ["complaint", "repair", "maintenance"],
+    summaryNote: `AI has classified this complaint under ${category} with ${Math.round((0.88 + Math.random() * 0.1) * 100)}% confidence. ${priority === "critical" ? "⚠️ Immediate attention required." : "Routine processing recommended."}`,
+  };
+}
+
+// ── Mock Complaints ─────────────────────────────────────────────────────────────
+export const MOCK_COMPLAINTS: Complaint[] = [
+  {
+    id: "c1",
+    petitionId: "PET-2024-001",
+    title: "Large pothole on Anna Salai causing accidents",
+    description: "There is a massive pothole on Anna Salai near the bus stop that has caused two accidents this week. The road is severely damaged and needs immediate repair. Many vehicles are getting damaged.",
+    category: "Road & Infrastructure",
+    location: "Anna Salai, Near Bus Stop No. 14",
+    district: "Coimbatore",
+    submittedBy: "u1",
+    submittedByName: "Akash Rajan",
+    submittedAt: "2024-08-10T09:30:00Z",
+    status: "in_progress",
+    priority: "critical",
+    assignedDepartment: "Roads & Infrastructure",
+    assignedOfficer: "o1",
+    assignedOfficerName: "Priya Suresh",
+    officerRemarks: "Site inspection done. Repair work scheduled for this weekend.",
+    aiAnalysis: {
+      category: "Road & Infrastructure",
+      categoryConfidence: 0.96,
+      department: "Roads & Infrastructure",
+      departmentConfidence: 0.94,
+      priority: "critical",
+      priorityScore: 0.92,
+      sentiment: "angry",
+      sentimentScore: 0.18,
+      isDuplicate: false,
+      duplicateCount: 0,
+      similarComplaints: [
+        { id: "PET-2024-089", title: "Pothole on main road causing vehicle damage", similarity: 0.85, status: "resolved" },
+      ],
+      urgencyLevel: "critical",
+      keywords: ["pothole", "accident", "anna salai", "damaged", "repair"],
+      summaryNote: "AI classified as Road & Infrastructure with 96% confidence. Critical priority due to accident risk. Immediate department routing applied.",
+    },
+    statusHistory: [
+      { status: "submitted", timestamp: "2024-08-10T09:30:00Z", note: "Complaint submitted by citizen", updatedBy: "System" },
+      { status: "under_review", timestamp: "2024-08-10T10:15:00Z", note: "AI analysis completed. Routed to Roads & Infrastructure department.", updatedBy: "AI System" },
+      { status: "assigned", timestamp: "2024-08-11T08:00:00Z", note: "Assigned to Officer Priya Suresh", updatedBy: "Admin" },
+      { status: "in_progress", timestamp: "2024-08-12T11:30:00Z", note: "Site visit completed. Repair scheduled.", updatedBy: "Priya Suresh" },
+    ],
+    reopenCount: 0,
+    isEscalated: false,
+  },
+  {
+    id: "c2",
+    petitionId: "PET-2024-002",
+    title: "No water supply for 3 days in our area",
+    description: "Our entire street has had no water supply for the past 3 days. We have complained to the ward office but no action has been taken. Families with small children are severely affected.",
+    category: "Water Supply",
+    location: "Gandhi Nagar, 5th Street",
+    district: "Coimbatore",
+    submittedBy: "u1",
+    submittedByName: "Akash Rajan",
+    submittedAt: "2024-08-08T14:20:00Z",
+    status: "resolved",
+    priority: "high",
+    assignedDepartment: "Water Works",
+    assignedOfficer: "o2",
+    assignedOfficerName: "Venkat Kumar",
+    officerRemarks: "Main pipeline was blocked. Repair completed successfully.",
+    resolutionDetails: "Blocked pipeline cleared. Water supply restored to all affected households.",
+    resolutionProof: "Resolved on 2024-08-10",
+    aiAnalysis: {
+      category: "Water Supply",
+      categoryConfidence: 0.93,
+      department: "Water Works",
+      departmentConfidence: 0.91,
+      priority: "high",
+      priorityScore: 0.78,
+      sentiment: "negative",
+      sentimentScore: 0.28,
+      isDuplicate: true,
+      duplicateCount: 2,
+      similarComplaints: [
+        { id: "PET-2024-056", title: "Water supply disruption in nearby area", similarity: 0.79, status: "resolved" },
+      ],
+      urgencyLevel: "high",
+      keywords: ["water supply", "3 days", "ward office", "families", "children"],
+      summaryNote: "AI classified as Water Supply with 93% confidence. High priority. 2 similar complaints detected from nearby areas.",
+    },
+    statusHistory: [
+      { status: "submitted", timestamp: "2024-08-08T14:20:00Z", note: "Complaint submitted by citizen", updatedBy: "System" },
+      { status: "under_review", timestamp: "2024-08-08T15:00:00Z", note: "AI classified and routed to Water Works", updatedBy: "AI System" },
+      { status: "assigned", timestamp: "2024-08-09T08:30:00Z", note: "Assigned to Officer Venkat Kumar", updatedBy: "Admin" },
+      { status: "in_progress", timestamp: "2024-08-09T11:00:00Z", note: "Investigating pipeline issue", updatedBy: "Venkat Kumar" },
+      { status: "resolved", timestamp: "2024-08-10T16:00:00Z", note: "Water supply restored after pipeline repair", updatedBy: "Venkat Kumar" },
+    ],
+    feedback: { rating: 4, comment: "Good response. Water was restored quickly after assignment.", submittedAt: "2024-08-11T09:00:00Z" },
+    reopenCount: 0,
+    isEscalated: false,
+  },
+  {
+    id: "c3",
+    petitionId: "PET-2024-003",
+    title: "Illegal construction blocking public road",
+    description: "A building under construction on Nehru Street has encroached on the public road. Material is stored on the road reducing it to a single lane causing severe traffic issues.",
+    category: "Building & Construction",
+    location: "Nehru Street, Near Post Office",
+    district: "Coimbatore",
+    submittedBy: "u1",
+    submittedByName: "Akash Rajan",
+    submittedAt: "2024-08-12T16:45:00Z",
+    status: "under_review",
+    priority: "medium",
+    assignedDepartment: "Roads & Infrastructure",
+    aiAnalysis: {
+      category: "Building & Construction",
+      categoryConfidence: 0.89,
+      department: "Roads & Infrastructure",
+      departmentConfidence: 0.85,
+      priority: "medium",
+      priorityScore: 0.55,
+      sentiment: "negative",
+      sentimentScore: 0.35,
+      isDuplicate: false,
+      duplicateCount: 0,
+      similarComplaints: [],
+      urgencyLevel: "medium",
+      keywords: ["illegal construction", "encroachment", "public road", "traffic"],
+      summaryNote: "AI classified as Building & Construction with 89% confidence. Medium priority. No duplicates found.",
+    },
+    statusHistory: [
+      { status: "submitted", timestamp: "2024-08-12T16:45:00Z", note: "Complaint submitted by citizen", updatedBy: "System" },
+      { status: "under_review", timestamp: "2024-08-12T17:00:00Z", note: "AI classified and routed to Roads & Infrastructure", updatedBy: "AI System" },
+    ],
+    reopenCount: 0,
+    isEscalated: false,
+  },
+  {
+    id: "c4",
+    petitionId: "PET-2024-004",
+    title: "Street lights not working for past 2 weeks",
+    description: "All street lights on KK Nagar main road have not been working for the past 2 weeks. The area is completely dark at night and residents fear for their safety.",
+    category: "Electricity",
+    location: "KK Nagar Main Road",
+    district: "Coimbatore",
+    submittedBy: "u4",
+    submittedByName: "Meena Devi",
+    submittedAt: "2024-08-09T19:00:00Z",
+    status: "assigned",
+    priority: "high",
+    assignedDepartment: "Electricity Board",
+    assignedOfficer: "o3",
+    assignedOfficerName: "Rekha Devi",
+    aiAnalysis: {
+      category: "Electricity",
+      categoryConfidence: 0.94,
+      department: "Electricity Board",
+      departmentConfidence: 0.96,
+      priority: "high",
+      priorityScore: 0.72,
+      sentiment: "negative",
+      sentimentScore: 0.32,
+      isDuplicate: false,
+      duplicateCount: 0,
+      similarComplaints: [
+        { id: "PET-2024-078", title: "Street lights issue in nearby colony", similarity: 0.68, status: "resolved" },
+      ],
+      urgencyLevel: "high",
+      keywords: ["street lights", "kk nagar", "2 weeks", "dark", "safety"],
+      summaryNote: "AI classified as Electricity with 94% confidence. High priority due to safety concerns.",
+    },
+    statusHistory: [
+      { status: "submitted", timestamp: "2024-08-09T19:00:00Z", note: "Complaint submitted by citizen", updatedBy: "System" },
+      { status: "under_review", timestamp: "2024-08-09T19:30:00Z", note: "AI classified and routed to Electricity Board", updatedBy: "AI System" },
+      { status: "assigned", timestamp: "2024-08-10T09:00:00Z", note: "Assigned to Officer Rekha Devi", updatedBy: "Admin" },
+    ],
+    reopenCount: 0,
+    isEscalated: false,
+  },
+  {
+    id: "c5",
+    petitionId: "PET-2024-005",
+    title: "Garbage pile up near residential area",
+    description: "A large pile of garbage has accumulated near our residential colony for over a week. The smell is unbearable and it is attracting stray dogs. Children in the area are at risk.",
+    category: "Waste Management",
+    location: "Saibaba Colony, Block 4",
+    district: "Coimbatore",
+    submittedBy: "u4",
+    submittedByName: "Meena Devi",
+    submittedAt: "2024-08-11T08:15:00Z",
+    status: "submitted",
+    priority: "medium",
+    assignedDepartment: "Waste Management",
+    aiAnalysis: {
+      category: "Waste Management",
+      categoryConfidence: 0.91,
+      department: "Waste Management",
+      departmentConfidence: 0.93,
+      priority: "medium",
+      priorityScore: 0.62,
+      sentiment: "angry",
+      sentimentScore: 0.2,
+      isDuplicate: true,
+      duplicateCount: 1,
+      similarComplaints: [
+        { id: "PET-2024-095", title: "Waste accumulation in Saibaba area", similarity: 0.81, status: "in_progress" },
+      ],
+      urgencyLevel: "medium",
+      keywords: ["garbage", "residential", "stray dogs", "smell", "children"],
+      summaryNote: "AI classified as Waste Management with 91% confidence. 1 similar complaint found from nearby area. Possible consolidation recommended.",
+    },
+    statusHistory: [
+      { status: "submitted", timestamp: "2024-08-11T08:15:00Z", note: "Complaint submitted by citizen", updatedBy: "System" },
+    ],
+    reopenCount: 0,
+    isEscalated: false,
+  },
+];
+
+// ── Mock Notifications ──────────────────────────────────────────────────────────
+export const MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: "n1",
+    userId: "u1",
+    title: "Petition Submitted Successfully",
+    message: "Your petition PET-2024-001 has been submitted and AI analysis is complete. Priority: Critical.",
+    type: "success",
+    isRead: false,
+    timestamp: "2024-08-10T09:35:00Z",
+    petitionId: "PET-2024-001",
+  },
+  {
+    id: "n2",
+    userId: "u1",
+    title: "Status Update: PET-2024-001",
+    message: "Your petition has been assigned to Officer Priya Suresh from Roads & Infrastructure.",
+    type: "info",
+    isRead: false,
+    timestamp: "2024-08-11T08:05:00Z",
+    petitionId: "PET-2024-001",
+  },
+  {
+    id: "n3",
+    userId: "u1",
+    title: "Petition Resolved: PET-2024-002",
+    message: "Your water supply complaint has been resolved. Water supply has been restored. Please provide your feedback.",
+    type: "success",
+    isRead: true,
+    timestamp: "2024-08-10T16:05:00Z",
+    petitionId: "PET-2024-002",
+  },
+  {
+    id: "n4",
+    userId: "u2",
+    title: "New Complaint Assigned",
+    message: "Complaint PET-2024-001 (Critical - Road & Infrastructure) has been assigned to you.",
+    type: "warning",
+    isRead: false,
+    timestamp: "2024-08-11T08:00:00Z",
+    petitionId: "PET-2024-001",
+  },
+  {
+    id: "n5",
+    userId: "u3",
+    title: "Critical Complaint Alert",
+    message: "A critical complaint PET-2024-001 requires immediate attention. AI flagged accident risk.",
+    type: "error",
+    isRead: false,
+    timestamp: "2024-08-10T09:40:00Z",
+    petitionId: "PET-2024-001",
+  },
+];
+
+// ── Analytics Data ──────────────────────────────────────────────────────────────
+export const ANALYTICS_DATA: AnalyticsData = {
+  totalComplaints: 127,
+  pendingComplaints: 48,
+  resolvedComplaints: 74,
+  criticalComplaints: 8,
+  duplicateComplaints: 15,
+  avgResolutionDays: 4.2,
+  categoryCounts: [
+    { category: "Road & Infrastructure", count: 34 },
+    { category: "Water Supply", count: 22 },
+    { category: "Waste Management", count: 19 },
+    { category: "Electricity", count: 16 },
+    { category: "Public Safety", count: 12 },
+    { category: "Building & Construction", count: 10 },
+    { category: "Others", count: 14 },
+  ],
+  departmentCounts: [
+    { department: "Roads & Infrastructure", count: 44 },
+    { department: "Water Works", count: 22 },
+    { department: "Waste Management", count: 19 },
+    { department: "Electricity Board", count: 16 },
+    { department: "Public Safety", count: 12 },
+    { department: "Others", count: 14 },
+  ],
+  priorityCounts: [
+    { priority: "Critical", count: 8 },
+    { priority: "High", count: 31 },
+    { priority: "Medium", count: 56 },
+    { priority: "Low", count: 32 },
+  ],
+  monthlyTrend: [
+    { month: "Mar", submitted: 18, resolved: 12 },
+    { month: "Apr", submitted: 22, resolved: 19 },
+    { month: "May", submitted: 15, resolved: 18 },
+    { month: "Jun", submitted: 28, resolved: 22 },
+    { month: "Jul", submitted: 24, resolved: 20 },
+    { month: "Aug", submitted: 20, resolved: 15 },
+  ],
+  statusCounts: [
+    { status: "Submitted", count: 12 },
+    { status: "Under Review", count: 10 },
+    { status: "Assigned", count: 14 },
+    { status: "In Progress", count: 12 },
+    { status: "Resolved", count: 74 },
+    { status: "Closed", count: 5 },
+  ],
+};

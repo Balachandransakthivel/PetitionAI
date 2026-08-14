@@ -1,0 +1,175 @@
+import { useState } from "react";
+import { Search, Filter, FileText } from "lucide-react";
+import { useComplaints } from "@/hooks/useComplaints";
+import { Link } from "react-router-dom";
+import { cn, statusClass, statusLabel, priorityClass, formatDate } from "@/lib/utils";
+import { ComplaintStatus, Priority } from "@/types";
+import { DEPARTMENTS, OFFICERS } from "@/constants/mockData";
+import { useNotifications } from "@/hooks/useNotifications";
+
+export default function AdminComplaints() {
+  const { complaints, updateComplaint } = useComplaints();
+  const { addNotification } = useNotifications(undefined);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<ComplaintStatus | "all">("all");
+  const [priorityFilter, setPriorityFilter] = useState<Priority | "all">("all");
+  const [deptFilter, setDeptFilter] = useState("all");
+  const [assigningId, setAssigningId] = useState<string | null>(null);
+  const [selectedOfficer, setSelectedOfficer] = useState("");
+
+  const filtered = complaints.filter(c => {
+    const ms = statusFilter === "all" || c.status === statusFilter;
+    const mp = priorityFilter === "all" || c.priority === priorityFilter;
+    const md = deptFilter === "all" || c.assignedDepartment === deptFilter;
+    const mq = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.petitionId.toLowerCase().includes(search.toLowerCase());
+    return ms && mp && md && mq;
+  });
+
+  function assignOfficer(cId: string) {
+    const officer = OFFICERS.find(o => o.id === selectedOfficer);
+    if (!officer) return;
+    updateComplaint(cId, {
+      assignedOfficer: officer.id,
+      assignedOfficerName: officer.name,
+      status: "assigned",
+      statusHistory: [
+        ...(complaints.find(c => c.id === cId)?.statusHistory || []),
+        { status: "assigned", timestamp: new Date().toISOString(), note: `Assigned to Officer ${officer.name}`, updatedBy: "Admin" },
+      ],
+    });
+    const c = complaints.find(x => x.id === cId);
+    if (c) {
+      addNotification({ userId: c.submittedBy, title: "Officer Assigned", message: `Officer ${officer.name} has been assigned to your petition ${c.petitionId}.`, type: "info", isRead: false, petitionId: c.petitionId });
+    }
+    setAssigningId(null);
+    setSelectedOfficer("");
+  }
+
+  return (
+    <div className="min-h-screen bg-background py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-6">
+          <h1 className="font-serif text-2xl font-bold text-foreground">Complaint Management</h1>
+          <p className="text-muted-foreground text-sm mt-1">{filtered.length} of {complaints.length} complaints shown</p>
+        </div>
+
+        {/* Filters */}
+        <div className="card-base p-4 mb-5 space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by title or petition ID..."
+              className="w-full border border-border rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+          </div>
+          <div className="flex flex-wrap gap-2 items-center">
+            <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+            {(["all", "submitted", "under_review", "assigned", "in_progress", "resolved", "closed"] as const).map(s => (
+              <button key={s} onClick={() => setStatusFilter(s as ComplaintStatus | "all")}
+                className={cn("text-xs px-2.5 py-1 rounded-full border transition-colors", statusFilter === s ? "bg-navy-800 text-white border-navy-800" : "bg-white text-muted-foreground border-border hover:border-navy-300")}>
+                {s === "all" ? "All Status" : statusLabel(s as ComplaintStatus)}
+              </button>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 items-center">
+            {(["all", "critical", "high", "medium", "low"] as const).map(p => (
+              <button key={p} onClick={() => setPriorityFilter(p as Priority | "all")}
+                className={cn("text-xs px-2.5 py-1 rounded-full border capitalize transition-colors", priorityFilter === p ? "bg-navy-800 text-white border-navy-800" : "bg-white text-muted-foreground border-border hover:border-navy-300")}>
+                {p === "all" ? "All Priority" : p}
+              </button>
+            ))}
+            <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)}
+              className="text-xs border border-border rounded-full px-3 py-1 focus:outline-none focus:ring-1 focus:ring-navy-400 bg-white">
+              <option value="all">All Departments</option>
+              {DEPARTMENTS.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="card-base overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-navy-800 text-white">
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Petition ID</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Title</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">AI Category</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Priority</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Officer</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Date</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filtered.length === 0 ? (
+                  <tr><td colSpan={8} className="text-center py-10 text-muted-foreground">No complaints found.</td></tr>
+                ) : (
+                  filtered.map(c => (
+                    <>
+                      <tr key={c.id} className="hover:bg-muted transition-colors">
+                        <td className="px-4 py-3">
+                          <Link to={`/admin/complaint/${c.id}`} className="font-mono text-xs text-navy-600 hover:text-navy-800 font-bold">{c.petitionId}</Link>
+                        </td>
+                        <td className="px-4 py-3 max-w-[200px]">
+                          <p className="font-medium text-foreground truncate">{c.title}</p>
+                          <p className="text-xs text-muted-foreground">{c.submittedByName}</p>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">
+                          <div>{c.category}</div>
+                          <div className="text-[10px] text-navy-500">{Math.round(c.aiAnalysis.categoryConfidence * 100)}% conf.</div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={cn("text-xs font-semibold px-2 py-0.5 rounded border", priorityClass(c.priority))}>{c.priority.toUpperCase()}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={cn("text-xs font-semibold px-2 py-0.5 rounded border", statusClass(c.status))}>{statusLabel(c.status)}</span>
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">
+                          {c.assignedOfficerName || <span className="text-amber-600">Unassigned</span>}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(c.submittedAt)}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-1.5">
+                            <Link to={`/admin/complaint/${c.id}`} className="text-xs text-navy-600 border border-navy-300 px-2 py-1 rounded hover:bg-navy-50 transition-colors">View</Link>
+                            {!c.assignedOfficer && (
+                              <button onClick={() => setAssigningId(assigningId === c.id ? null : c.id)}
+                                className="text-xs text-purple-600 border border-purple-300 px-2 py-1 rounded hover:bg-purple-50 transition-colors">
+                                Assign
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                      {assigningId === c.id && (
+                        <tr className="bg-purple-50">
+                          <td colSpan={8} className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <select value={selectedOfficer} onChange={e => setSelectedOfficer(e.target.value)}
+                                className="border border-border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-navy-400">
+                                <option value="">Select Officer</option>
+                                {OFFICERS.filter(o => o.department === c.assignedDepartment).map(o => (
+                                  <option key={o.id} value={o.id}>{o.name} ({o.assignedCount} active)</option>
+                                ))}
+                                {OFFICERS.filter(o => o.department === c.assignedDepartment).length === 0 &&
+                                  OFFICERS.map(o => <option key={o.id} value={o.id}>{o.name} - {o.department}</option>)}
+                              </select>
+                              <button onClick={() => assignOfficer(c.id)} disabled={!selectedOfficer}
+                                className="text-sm bg-purple-600 hover:bg-purple-700 text-white px-4 py-1.5 rounded-md disabled:opacity-50 transition-colors">
+                                Assign
+                              </button>
+                              <button onClick={() => setAssigningId(null)} className="text-sm text-muted-foreground hover:text-foreground">Cancel</button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
