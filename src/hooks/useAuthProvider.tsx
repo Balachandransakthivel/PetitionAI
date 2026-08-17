@@ -2,6 +2,7 @@ import { useState, useEffect, ReactNode } from "react";
 import { AuthContext, RegisterData, getStoredUser, storeUser, clearUser, mockLogin } from "@/lib/auth";
 import { User } from "@/types";
 import { MOCK_USERS } from "@/constants/mockData";
+import { apiLogin, apiRegister, isBackendUp } from "@/lib/api";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -15,6 +16,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     setIsLoading(true);
+    try {
+      if (await isBackendUp()) {
+        const found = await apiLogin(email, password);
+        storeUser(found);
+        setUser(found);
+        setIsLoading(false);
+        return { success: true };
+      }
+    } catch {
+      // fall through to mock
+    }
+
     await new Promise(r => setTimeout(r, 800));
     const found = mockLogin(email, password);
     if (!found) {
@@ -29,6 +42,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function register(data: RegisterData) {
     setIsLoading(true);
+    try {
+      if (await isBackendUp()) {
+        const newUser = await apiRegister(data);
+        storeUser(newUser);
+        setUser(newUser);
+        setIsLoading(false);
+        return { success: true };
+      }
+    } catch {
+      // fall through to mock
+    }
+
     await new Promise(r => setTimeout(r, 1000));
     const exists = MOCK_USERS.find(u => u.email === data.email);
     if (exists) {

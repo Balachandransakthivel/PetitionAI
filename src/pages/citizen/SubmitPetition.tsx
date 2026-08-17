@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileText, MapPin, Tag, Brain, Upload, CheckCircle, Loader2, AlertTriangle } from "lucide-react";
+import { FileText, MapPin, Tag, Brain, Upload, CheckCircle, Loader2, AlertTriangle, X, Image, FileIcon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useComplaints } from "@/hooks/useComplaints";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -8,10 +8,19 @@ import { CATEGORIES } from "@/constants/mockData";
 import { generateAIAnalysis, generatePetitionId } from "@/lib/utils";
 import { Complaint, StatusUpdate } from "@/types";
 import AIAnalysisCard from "@/components/features/AIAnalysisCard";
+import { analyzeImagesWithAI } from "@/lib/ai/imageAnalysis";
 
-import { generateAIAnalysis as genAI } from "@/constants/mockData";
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILES = 5;
 
 type Step = "form" | "analyzing" | "result";
+
+interface UploadedFile {
+  file: File;
+  preview: string;
+  base64: string;
+}
 
 export default function SubmitPetition() {
   const { user } = useAuth();
@@ -21,6 +30,9 @@ export default function SubmitPetition() {
 
   const [step, setStep] = useState<Step>("form");
   const [submittedComplaint, setSubmittedComplaint] = useState<Complaint | null>(null);
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [dragActive, setDragActive] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -34,13 +46,117 @@ export default function SubmitPetition() {
     setForm(prev => ({ ...prev, [field]: value }));
   }
 
+  const validateFile = useCallback((file: File): string | null => {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return `Invalid file type: ${file.name}. Only JPG, PNG, and PDF are allowed.`;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      return `File too large: ${file.name}. Maximum size is 5MB.`;
+    }
+    return null;
+  }, []);
+
+  const processFile = useCallback((file: File): Promise<UploadedFile> => {
+    return new Promise((resolve, reject) => {
+      const error = validateFile(file);
+      if (error) {
+        reject(new Error(error));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        const preview = file.type.startsWith("image/") ? base64 : "";
+        resolve({ file, preview, base64 });
+      };
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
+  }, [validateFile]);
+
+  const handleFiles = useCallback(async (newFiles: FileList | File[]) => {
+    const fileArray = Array.from(newFiles);
+    const remainingSlots = MAX_FILES - files.length;
+
+    if (fileArray.length > remainingSlots) {
+      setFileError(`Maximum ${MAX_FILES} files allowed. You can add ${remainingSlots} more.`);
+      return;
+    }
+
+    setFileError(null);
+
+    for (const file of fileArray.slice(0, remainingSlots)) {
+      try {
+        const uploadedFile = await processFile(file);
+        setFiles(prev => [...prev, uploadedFile]);
+      } catch (err) {
+        setFileError(err instanceof Error ? err.message : "Failed to upload file");
+      }
+    }
+  }, [files.length, processFile]);
+
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  }, [handleFiles]);
+
+  const handleBrowseClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+    input.accept = ALLOWED_TYPES.join(",");
+    input.onchange = (ev) => {
+      if (ev.target instanceof HTMLInputElement && ev.target.files) {
+        handleFiles(ev.target.files);
+      }
+    };
+    input.click();
+  }, [handleFiles]);
+
+  const removeFile = useCallback((index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFileError(null);
+  }, []);
+
+  const clearFiles = useCallback(() => {
+    setFiles([]);
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStep("analyzing");
 
     await new Promise(r => setTimeout(r, 2200));
 
-    const aiResult = generateAIAnalysis(form.title, form.description, form.category);
+    let imageAnalysisResults: string[] = [];
+    if (files.length > 0) {
+      try {
+        imageAnalysisResults = await analyzeImagesWithAI(files.map(f => f.base64));
+      } catch (err) {
+        console.warn("Image analysis failed:", err);
+      }
+    }
+
+    const combinedDescription = form.description + 
+      (imageAnalysisResults.length > 0 ? "\n\nAI Image Analysis:\n" + imageAnalysisResults.join("\n") : "");
+
+    const aiResult = generateAIAnalysis(form.title, combinedDescription, form.category);
     const petitionId = generatePetitionId();
     const now = new Date().toISOString();
 
@@ -72,6 +188,7 @@ export default function SubmitPetition() {
       statusHistory,
       reopenCount: 0,
       isEscalated: false,
+      images: files.map(f => f.base64),
     };
 
     addComplaint(complaint);
@@ -86,6 +203,7 @@ export default function SubmitPetition() {
 
     setSubmittedComplaint(complaint);
     setStep("result");
+    setFiles([]);
   }
 
   if (step === "analyzing") {
@@ -250,13 +368,102 @@ export default function SubmitPetition() {
             </select>
           </div>
 
-          <div className="border-2 border-dashed border-border rounded-md p-6 text-center">
-            <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">Supporting images/documents</p>
-            <p className="text-xs text-muted-foreground mt-1">Drag & drop or click to upload (JPG, PNG, PDF — max 5MB)</p>
-            <button type="button" className="mt-3 text-xs text-navy-600 border border-navy-300 px-3 py-1.5 rounded-md hover:bg-navy-50 transition-colors">
-              Browse Files
-            </button>
+          <div
+            className={`border-2 rounded-md p-6 transition-colors ${
+              dragActive
+                ? "border-navy-400 bg-navy-50"
+                : "border-dashed border-border"
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+          >
+            {files.length === 0 ? (
+              <div className="text-center">
+                <Upload className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Supporting images/documents</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Drag & drop or click to upload (JPG, PNG, PDF — max 5MB)
+                </p>
+                <button
+                  type="button"
+                  onClick={handleBrowseClick}
+                  className="mt-3 text-xs text-navy-600 border border-navy-300 px-3 py-1.5 rounded-md hover:bg-navy-50 transition-colors"
+                >
+                  Browse Files
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-foreground">
+                    {files.length}/{MAX_FILES} files uploaded
+                  </p>
+                  {files.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={clearFiles}
+                      className="text-xs text-red-600 hover:underline"
+                    >
+                      Clear all
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-h-48 overflow-y-auto">
+                  {files.map((uploadedFile, index) => (
+                    <div
+                      key={index}
+                      className="relative group border border-border rounded-md p-2 bg-white"
+                    >
+                      {uploadedFile.preview ? (
+                        <img
+                          src={uploadedFile.preview}
+                          alt={uploadedFile.file.name}
+                          className="w-full h-16 object-cover rounded mb-1"
+                        />
+                      ) : (
+                        <div className="w-full h-16 flex items-center justify-center bg-gray-100 rounded mb-1">
+                          <FileIcon className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground truncate" title={uploadedFile.file.name}>
+                        {uploadedFile.file.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {(uploadedFile.file.size / 1024).toFixed(1)} KB
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-red-600"
+                        aria-label="Remove file"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {files.length < MAX_FILES && (
+                    <button
+                      type="button"
+                      onClick={handleBrowseClick}
+                      className="border-2 border-dashed border-border rounded-md p-3 flex flex-col items-center justify-center text-center hover:border-navy-400 hover:bg-navy-50 transition-colors"
+                    >
+                      <Upload className="w-5 h-5 text-muted-foreground mb-1" />
+                      <span className="text-xs text-muted-foreground">Add more</span>
+                    </button>
+                  )}
+                </div>
+
+                {fileError && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {fileError}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md">

@@ -8,6 +8,7 @@ export * from "./sentimentAnalysis";
 export * from "./priorityPrediction";
 export * from "./classification";
 export * from "./duplicateDetection";
+export * from "./imageAnalysis";
 
 export function generateAIAnalysis(
   title: string,

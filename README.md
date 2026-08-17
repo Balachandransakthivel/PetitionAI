@@ -1,147 +1,222 @@
-# 🏛️ PetitionAI — Intelligent Petition Classification & Resolution System
+# PetitionAI - AI-Powered Grievance & Petition Management System
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?logo=tailwindcss)
+## Aim / Objective
 
-> **PetitionAI** is an AI-powered civic grievance platform that automates complaint classification, urgency prioritization, duplicate petition detection, and intelligent department routing. Built to streamline citizen-to-government interaction for faster, transparent resolution.
+The aim of this project is to develop an AI-powered grievance and petition management system that intelligently analyzes petitions using Artificial Intelligence (AI) and Natural Language Processing (NLP), automatically categorizes them into the appropriate government departments, identifies urgent and repetitive grievances, sends automated reminders to responsible officials, tracks the progress of each petition until resolution, and provides real-time status updates to petitioners. The system is designed to improve the efficiency, transparency, accountability, and responsiveness of grievance redressal processes while reducing manual effort and ensuring timely resolution of public complaints.
 
----
+## Methodology
 
-## 🌟 Key Features
+### 1. Petition Submission
+Citizens submit complaints through a user-friendly web interface with support for text descriptions, images, and document uploads (JPG, PNG, PDF up to 5MB). The system captures location, category, and district information for proper routing.
 
-### 🤖 Intelligent AI Engine (`src/lib/ai/`)
-- **Automated Classification**: Automatically tags petitions with civic categories (*Roads & Infrastructure, Water Works, Sanitation, Electricity, Public Safety, etc.*) and routes them to the correct government department.
-- **Duplicate Detection**: Identifies matching or nearby duplicate complaints using similarity scoring to avoid redundant officer workloads.
-- **Urgency & Priority Scoring**: Scans text for critical keywords (*emergencies, floods, power outages, hazard level*) to assign priority scores (*Critical, High, Medium, Low*).
-- **Sentiment Analysis**: Evaluates citizen sentiment (*Positive, Neutral, Negative, Angry*) to prioritize high-friction grievances.
+### 2. AI-Based Text Analysis
+- **NLP Classification**: Analyzes complaint title and description using keyword-based classification
+- **Sentiment Analysis**: Detects emotional tone (positive, neutral, negative, angry) to gauge urgency
+- **Keyword Extraction**: Identifies key terms for categorization and search
 
-### 👥 Role-Based Portals (`src/pages/`)
-1. **Citizen Portal**
-   - Submit petitions with detailed descriptions, location tags, and file attachments.
-   - Track petition progress in real time with interactive status timelines.
-   - Receive automated notifications upon status updates and submit post-resolution feedback.
-2. **Officer Portal**
-   - View assigned department complaints with deep AI breakdown cards.
-   - Update complaint status, record resolution notes, and attach resolution proof.
-   - Escalate critical cases to higher administrative authorities.
-3. **Admin Dashboard**
-   - System-wide overview of all active petitions, users, and department statistics.
-   - Assign officers to cases, manage user permissions, and inspect department performance analytics.
+### 3. Automatic Department Classification
+Maps complaint categories to appropriate government departments:
+- Road & Infrastructure → Roads & Infrastructure (PWD)
+- Water Supply → Water Works
+- Electricity → Electricity Board
+- Waste Management/Sanitation → Waste Management
+- Public Safety/Noise Pollution → Public Safety
+- Healthcare → Health Department
+- Education → Education Department
+- Public Transport → Transport Authority
 
----
+### 4. Priority Detection
+Automatically assigns priority levels based on content analysis:
+- **Critical**: Emergency keywords (accident, flood, fire, collapse, sewage overflow)
+- **High**: Urgent issues (broken, leaking, no water/electricity, pothole, blocked drain)
+- **Medium**: Standard complaints
+- **Low**: Brief/minor complaints
 
-## 📂 Project Architecture
+### 5. Duplicate Grievance Detection
+Identifies similar existing complaints using semantic similarity matching to prevent duplicate work and enable complaint consolidation.
 
-```
-PetitionAI/
-├── public/                  # Static assets & favicons
-│   ├── favicon.svg          # SVG vector favicon
-│   ├── favicon.png          # PNG favicon logo
-│   └── robots.txt           # SEO rules
-├── src/
-│   ├── assets/              # App images and banners
-│   ├── components/
-│   │   ├── features/        # AI Analysis Card, Chatbot, Timeline, etc.
-│   │   ├── layout/          # Navbar & Header navigation
-│   │   └── ui/              # Reusable Radix / Tailwind UI primitives
-│   ├── constants/           # Mock data, category definitions, departments
-│   ├── hooks/               # State hooks (useAuthProvider, useComplaints, useNotifications)
-│   ├── lib/
-│   │   ├── ai/              # Modular AI Engine
-│   │   │   ├── classification.ts
-│   │   │   ├── duplicateDetection.ts
-│   │   │   ├── priorityPrediction.ts
-│   │   │   ├── sentimentAnalysis.ts
-│   │   │   └── index.ts
-│   │   ├── auth.ts          # Authentication logic
-│   │   └── utils.ts         # Utility helpers & formatters
-│   ├── pages/               # Application routes
-│   │   ├── admin/           # Admin Dashboard, Complaints, Analytics, Users
-│   │   ├── citizen/         # Citizen Dashboard, Submit Petition, My Petitions
-│   │   ├── officer/         # Officer Dashboard, Officer Petition Detail
-│   │   ├── LandingPage.tsx  # Public landing page
-│   │   ├── LoginPage.tsx    # Auth login page
-│   │   └── RegisterPage.tsx # Citizen registration
-│   ├── types/               # Modularized TypeScript definitions
-│   │   ├── ai.ts            # AI analysis types
-│   │   ├── petition.ts      # Complaint & Department types
-│   │   ├── user.ts          # User & Role types
-│   │   └── index.ts         # Central re-exports
-│   ├── App.tsx              # Main App & Router configuration
-│   └── main.tsx             # Application entry point
-├── package.json             # NPM dependencies & scripts
-├── tailwind.config.ts       # Tailwind CSS configuration
-├── tsconfig.json            # Root TypeScript solution config
-├── tsconfig.app.json        # Frontend TypeScript config
-└── vite.config.ts           # Vite build configuration
-```
+### 6. Workflow Management
+Complete petition lifecycle management:
+- Submitted → Under Review → Assigned → In Progress → Resolved → Closed
+- Officer assignment with department-wise routing
+- Officer remarks and resolution tracking
+- Reopen/escalation handling
 
----
+### 7. Progress Tracking
+- Real-time status updates for citizens
+- Petition ID based tracking
+- Status history with timestamps and notes
+- AI analysis summary with confidence scores
 
-## 🚀 Getting Started
+## Technology Stack
 
-### Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **npm**: v9.0.0 or higher
+### Frontend
+- **React.js 18** - Modern UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Accessible component library
+- **Radix UI** - Headless UI primitives
+- **React Router** - Client-side routing
+- **React Hook Form + Zod** - Form validation
+- **TanStack Query** - Server state management
+- **Redux Toolkit** - Global state management
+- **Lucide React** - Icon library
+- **Recharts** - Data visualization
+- **Framer Motion** - Animations
+- **Leaflet/React-Leaflet** - Map integration
 
-### Installation & Setup
+### Backend (FastAPI)
+- **FastAPI** - High-performance Python REST API framework
+- **MongoDB** - Document database (with automatic in-memory fallback)
+- **REST APIs** - JWT-protected endpoints for auth, complaints, notifications, analytics
+- **Email (SMTP)** - Status notifications to petitioners
+- **SMS** - Pluggable SMS provider (console / Twilio)
+- **JWT** - Token-based authentication
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Balachandransakthivel/PetitionAI.git
-   cd PetitionAI
-   ```
+### AI/ML Integration
+- **TF-IDF + Cosine Similarity (scikit-learn style)** - Real NLP text classification for category/department routing
+- **Sentiment Analysis** - Detects emotional tone (positive/neutral/negative/angry)
+- **Priority Prediction** - Critical/High/Medium/Low urgency detection
+- **Duplicate Detection** - TF-IDF similarity matching against existing complaints
+- **Google Generative AI (Gemini 1.5 Flash)** - Image analysis for uploaded photos/documents
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+### Development Tools
+- **ESLint** - Code linting
+- **PostCSS + Autoprefixer** - CSS processing
+- **TypeScript ESLint** - TypeScript-specific linting
 
-3. **Start Development Server**
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:5173` in your browser.
+## Applications
 
-4. **Build for Production**
-   ```bash
-   npm run build
-   ```
+1. **Government Grievance Redressal Systems** - Central/state government complaint portals
+2. **Municipal Corporation Complaint Management** - City-level civic issues (roads, water, waste, lights)
+3. **Smart City Administration** - Integrated urban management platforms
+4. **District Collector & Public Service Offices** - District-level grievance handling
+5. **E-Governance Portals** - Digital government service delivery
+6. **University & College Grievance Portals** - Student/faculty complaint systems
+7. **Healthcare Complaint Management Systems** - Hospital/patient grievance tracking
+8. **Corporate Employee Grievance Systems** - Internal HR complaint management
+9. **Customer Service & Complaint Management Platforms** - Business customer support
 
-5. **Linting & Type Checking**
-   ```bash
-   npm run lint
-   npx tsc --noEmit
-   ```
+## Key Features Implemented
 
----
+- ✅ Citizen portal for petition submission with file upload
+- ✅ AI-powered text analysis (classification, sentiment, priority)
+- ✅ Automatic department routing
+- ✅ Duplicate detection
+- ✅ Image analysis using Gemini AI
+- ✅ Officer dashboard with assignment management
+- ✅ Admin analytics and user management
+- ✅ Real-time notifications
+- ✅ Petition tracking with status history
+- ✅ Role-based access (Citizen, Officer, Admin)
+- ✅ Responsive UI with dark mode support
+- ✅ Map integration for location visualization
 
-## 🛠️ Tech Stack
-
-- **Frontend Core**: [React 18](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/), [Lucide React Icons](https://lucide.dev/)
-- **UI Components**: [Radix UI Primitives](https://www.radix-ui.com/), [shadcn/ui](https://ui.shadcn.com/)
-- **Routing & State**: [React Router v6](https://reactrouter.com/), Context API
-- **Charts & Data**: [Recharts](https://recharts.org/)
-
----
-
-## 🔐 Demo Credentials
-
-Quick login credentials for testing each portal role:
+## Demo Users
 
 | Role | Email | Password |
-| :--- | :--- | :--- |
-| **Citizen** | `citizen@demo.com` | `citizen123` |
-| **Officer** | `officer@demo.com` | `officer123` |
-| **Admin** | `admin@demo.com` | `admin123` |
+|------|-------|----------|
+| Citizen | citizen@demo.com | citizen123 |
+| Citizen | bala@demo.com | citizen123 |
+| Citizen | arun@demo.com | citizen123 |
+| Citizen | aathi@demo.com | citizen123 |
+| Officer | officer@demo.com | officer123 |
+| Admin | admin@demo.com | admin123 |
 
----
+## Getting Started (Full Stack)
 
-## 📄 License
+The project has a **React frontend** and a **FastAPI backend**. Run both for the complete experience.
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+```bash
+# 1. Install frontend dependencies
+npm install
+
+# 2. Install backend (Python 3.14+) and its dependencies
+npm run backend:install
+
+# 3. Configure backend environment
+#    Copy backend/.env.example to backend/.env and edit as needed
+
+# 4. Start the FastAPI backend (port 8000)
+npm run backend
+
+# 5. In a new terminal, start the React dev server (port 8080)
+npm run dev
+```
+
+Open http://localhost:8080 — the Vite dev server proxies `/api` requests to the backend.
+
+> **No MongoDB? No problem.** Set `USE_MONGODB=false` in `backend/.env` and the backend uses a
+> built-in in-memory store. The frontend also falls back to local mock data if the backend is offline.
+
+```bash
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linting
+npm run lint
+```
+
+## Environment Variables
+
+Frontend `.env` (for AI image analysis):
+
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+VITE_API_URL=/api   # defaults to /api (proxied to backend)
+```
+
+Backend `backend/.env` — see `backend/.env.example` for MongoDB URI, SMTP email,
+SMS provider (console/twilio), JWT secret, and Gemini key.
+
+## Project Structure
+
+```
+backend/                # FastAPI backend
+├── app/
+│   ├── main.py        # FastAPI entry point
+│   ├── config.py      # Environment configuration
+│   ├── database.py    # MongoDB layer (with in-memory fallback)
+│   ├── models.py      # Pydantic models
+│   ├── seed.py        # Seed users, complaints, notifications
+│   ├── ai/
+│   │   ├── ml_pipeline.py   # NLP/ML: TF-IDF classification, sentiment, priority
+│   │   └── duplicates.py    # Duplicate grievance detection
+│   ├── services/
+│   │   ├── email_service.py # SMTP notifications
+│   │   └── sms_service.py   # SMS notifications (console/twilio)
+│   └── routers/       # REST API routers
+│       ├── auth.py        # Login/register (JWT)
+│       ├── complaints.py  # Complaint CRUD + AI analysis
+│       ├── notifications.py
+│       └── analytics.py
+├── requirements.txt   # Python dependencies
+└── .env.example       # Environment template
+
+src/                    # React frontend
+├── components/          # Reusable UI components
+│   ├── ui/             # shadcn/ui components
+│   └── features/       # Feature-specific components
+├── pages/              # Page components
+│   ├── citizen/        # Citizen portal pages
+│   ├── officer/        # Officer dashboard pages
+│   └── admin/          # Admin panel pages
+├── hooks/              # Custom React hooks (API + local fallback)
+├── lib/                # Utility libraries
+│   ├── api.ts          # REST API client (talks to FastAPI backend)
+│   ├── ai/             # Frontend AI modules
+│   │   ├── classification.ts
+│   │   ├── sentimentAnalysis.ts
+│   │   ├── priorityPrediction.ts
+│   │   ├── duplicateDetection.ts
+│   │   └── imageAnalysis.ts  # Gemini image analysis
+│   ├── auth.ts         # Authentication utilities
+│   └── utils.ts        # General utilities
+├── constants/          # Mock data and constants
+├── types/              # TypeScript type definitions
+└── main.tsx            # Application entry point
+```

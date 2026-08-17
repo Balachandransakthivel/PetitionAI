@@ -28,6 +28,33 @@ export const MOCK_USERS: User[] = [
     phone: "+91 76543 21098",
     joinedAt: "2022-01-10",
   },
+  {
+    id: "u4",
+    name: "Bala Murugan",
+    email: "bala@demo.com",
+    role: "citizen",
+    phone: "+91 94444 11111",
+    address: "45, RS Puram, Coimbatore - 641002",
+    joinedAt: "2024-05-20",
+  },
+  {
+    id: "u5",
+    name: "Arun Kumar",
+    email: "arun@demo.com",
+    role: "citizen",
+    phone: "+91 95555 22222",
+    address: "78, Saibaba Colony, Coimbatore - 641011",
+    joinedAt: "2024-06-10",
+  },
+  {
+    id: "u6",
+    name: "Aathi Selvan",
+    email: "aathi@demo.com",
+    role: "citizen",
+    phone: "+91 96666 33333",
+    address: "23, Peelamedu, Coimbatore - 641004",
+    joinedAt: "2024-07-01",
+  },
 ];
 
 // ── Categories & Departments ────────────────────────────────────────────────────

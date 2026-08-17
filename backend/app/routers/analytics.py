@@ -1,0 +1,98 @@
+"""Analytics router - aggregate stats for dashboards."""
+from collections import Counter
+from datetime import datetime, timedelta
+
+from fastapi import APIRouter, Depends
+
+from app.ai.ml_pipeline import CATEGORIES
+from app.database import db
+from app.routers.auth import get_current_user
+
+router = APIRouter(prefix="/api/analytics", tags=["analytics"])
+
+
+def _month_label(d: datetime) -> str:
+    return d.strftime("%b")
+
+
+@router.get("")
+def get_analytics(user: dict = Depends(get_current_user)) -> dict:
+    complaints = db.find("complaints", {})
+
+    total = len(complaints)
+    statuses = Counter(c.get("status", "submitted") for c in complaints)
+    priorities = Counter(c.get("priority", "medium") for c in complaints)
+    categories = Counter(c.get("category", "Other") for c in complaints)
+    departments = Counter(c.get("assignedDepartment", "Other") for c in complaints)
+
+    resolved = statuses.get("resolved", 0) + statuses.get("closed", 0)
+    critical = priorities.get("critical", 0)
+    duplicates = sum(1 for c in complaints if c.get("aiAnalysis", {}).get("isDuplicate"))
+
+    # avg resolution days for resolved complaints
+    res_times: list[float] = []
+    for c in complaints:
+        if c.get("status") not in ("resolved", "closed"):
+            continue
+        history = c.get("statusHistory", [])
+        start = None
+        end = None
+        for h in history:
+            try:
+                ts = datetime.fromisoformat(h.get("timestamp", "").replace("Z", "+00:00"))
+            except Exception:
+                continue
+            if h.get("status") in ("submitted", "under_review") and start is None:
+                start = ts
+            if h.get("status") in ("resolved", "closed"):
+                end = ts
+        if start and end:
+            res_times.append((end - start).total_seconds() / 86400)
+    avg_res = round(sum(res_times) / len(res_times), 1) if res_times else 0
+
+    # monthly trend for last 6 months
+    now = datetime.now()
+    trend_map: dict[str, dict] = {}
+    for i in range(5, -1, -1):
+        month = now - timedelta(days=30 * i)
+        trend_map[_month_label(month)] = {"submitted": 0, "resolved": 0}
+
+    for c in complaints:
+        try:
+            submitted_ts = datetime.fromisoformat(c.get("submittedAt", "").replace("Z", "+00:00"))
+        except Exception:
+            continue
+        label = _month_label(submitted_ts)
+        if label in trend_map:
+            trend_map[label]["submitted"] += 1
+            if c.get("status") in ("resolved", "closed"):
+                trend_map[label]["resolved"] += 1
+
+    status_labels = ["Submitted", "Under Review", "Assigned", "In Progress", "Resolved", "Closed"]
+    status_counts = [
+        {"status": s, "count": statuses.get(s.lower().replace(" ", "_"), 0)} for s in status_labels
+    ]
+
+    return {
+        "totalComplaints": total,
+        "pendingComplaints": total - resolved,
+        "resolvedComplaints": resolved,
+        "criticalComplaints": critical,
+        "duplicateComplaints": duplicates,
+        "avgResolutionDays": avg_res,
+        "categoryCounts": [
+            {"category": cat, "count": categories.get(cat, 0)} for cat in CATEGORIES
+        ] + [{"category": "Others", "count": categories.get("Other", 0)}],
+        "departmentCounts": [
+            {"department": dept, "count": count} for dept, count in departments.most_common()
+        ],
+        "priorityCounts": [
+            {"priority": p.title(), "count": priorities.get(p, 0)}
+            for p in ["critical", "high", "medium", "low"]
+        ],
+        "monthlyTrend": [
+            {"month": month, "submitted": v["submitted"], "resolved": v["resolved"]}
+            for month, v in trend_map.items()
+        ],
+        "statusCounts": status_counts,
+    }

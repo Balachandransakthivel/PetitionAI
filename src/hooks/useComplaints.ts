@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Complaint } from "@/types";
 import { MOCK_COMPLAINTS } from "@/constants/mockData";
+import { apiCreateComplaint, apiListComplaints, apiUpdateComplaint, isBackendUp, mockListComplaints } from "@/lib/api";
 
 const STORAGE_KEY = "petition_ai_complaints";
 
@@ -20,19 +21,73 @@ function saveComplaints(complaints: Complaint[]) {
 
 export function useComplaints() {
   const [complaints, setComplaints] = useState<Complaint[]>(loadComplaints);
+  const [backendUp, setBackendUp] = useState(false);
 
   useEffect(() => {
-    saveComplaints(complaints);
-  }, [complaints]);
+    let cancelled = false;
+    isBackendUp().then(up => {
+      if (cancelled) return;
+      setBackendUp(up);
+      if (up) {
+        apiListComplaints()
+          .then(list => {
+            if (!cancelled && list.length > 0) setComplaints(list);
+          })
+          .catch(() => {});
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
 
-  function addComplaint(c: Complaint) {
+  useEffect(() => {
+    if (!backendUp) saveComplaints(complaints);
+  }, [complaints, backendUp]);
+
+  const refresh = useCallback(async () => {
+    if (!(await isBackendUp())) return;
+    try {
+      const list = await apiListComplaints();
+      if (list.length > 0) setComplaints(list);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  async function addComplaint(c: Complaint) {
     setComplaints(prev => [c, ...prev]);
+    if (await isBackendUp()) {
+      try {
+        const created = await apiCreateComplaint({
+          title: c.title,
+          description: c.description,
+          category: c.category,
+          location: c.location,
+          district: c.district,
+          images: c.images || [],
+        });
+        return created;
+      } catch (err) {
+        console.warn("Backend create failed, kept local:", err);
+        return c;
+      }
+    }
+    return c;
   }
 
-  function updateComplaint(id: string, updates: Partial<Complaint>) {
+  async function updateComplaint(id: string, updates: Partial<Complaint>) {
     setComplaints(prev =>
       prev.map(c => (c.id === id ? { ...c, ...updates } : c))
     );
+    if (await isBackendUp()) {
+      try {
+        const updated = await apiUpdateComplaint(id, updates as Record<string, unknown>);
+        return updated;
+      } catch (err) {
+        console.warn("Backend update failed, kept local:", err);
+        return null;
+      }
+    }
+    return null;
   }
 
   function getByUser(userId: string) {
@@ -47,5 +102,5 @@ export function useComplaints() {
     return complaints.filter(c => c.assignedOfficer === officerId);
   }
 
-  return { complaints, addComplaint, updateComplaint, getByUser, getByDepartment, getByOfficer };
+  return { complaints, addComplaint, updateComplaint, getByUser, getByDepartment, getByOfficer, refresh };
 }

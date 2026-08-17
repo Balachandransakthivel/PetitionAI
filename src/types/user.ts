@@ -10,4 +10,5 @@ export interface User {
   department?: string;
   joinedAt: string;
   avatar?: string;
+  token?: string;
 }
