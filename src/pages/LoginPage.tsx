@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Shield, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Shield, Eye, EyeOff, Loader2, KeyRound, Mail, CheckCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { DEMO_CREDENTIALS } from "@/lib/auth";
 
@@ -11,6 +11,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
+  const [showForgot, setShowForgot] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetSent, setResetSent] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,6 +36,68 @@ export default function LoginPage() {
     setEmail(cred.email);
     setPassword(cred.password);
     setError("");
+  }
+
+  async function handlePasswordReset(e: React.FormEvent) {
+    e.preventDefault();
+    setResetLoading(true);
+    await new Promise(r => setTimeout(r, 1500));
+    setResetLoading(false);
+    setResetSent(true);
+  }
+
+  if (showForgot) {
+    return (
+      <div className="min-h-screen bg-muted flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-navy-800 rounded-xl mb-4 shadow-lg">
+              <KeyRound className="w-7 h-7 text-gold-400" />
+            </div>
+            <h1 className="font-serif text-2xl font-bold text-foreground">Reset Password</h1>
+            <p className="text-muted-foreground text-sm mt-1">Enter your email to receive a reset link</p>
+          </div>
+
+          <div className="card-base p-6 shadow-lg">
+            {resetSent ? (
+              <div className="text-center py-4">
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">Check Your Email</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  We've sent a password reset link to <strong>{resetEmail}</strong>. Please check your inbox and follow the instructions.
+                </p>
+                <button onClick={() => { setShowForgot(false); setResetSent(false); setResetEmail(""); }}
+                  className="text-sm text-navy-700 font-semibold hover:text-navy-900">
+                  Back to Sign In
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handlePasswordReset} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">Email Address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} required
+                      placeholder="Enter your registered email"
+                      className="w-full border border-border rounded-md pl-10 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+                  </div>
+                </div>
+                <button type="submit" disabled={resetLoading}
+                  className="w-full bg-navy-800 hover:bg-navy-700 disabled:opacity-60 text-white font-semibold py-2.5 rounded-md transition-colors flex items-center justify-center gap-2">
+                  {resetLoading ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending...</> : "Send Reset Link"}
+                </button>
+                <button type="button" onClick={() => setShowForgot(false)}
+                  className="w-full text-sm text-muted-foreground hover:text-foreground py-2">
+                  Back to Sign In
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -81,7 +147,13 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-foreground">Password</label>
+                <button type="button" onClick={() => setShowForgot(true)}
+                  className="text-xs text-navy-600 hover:text-navy-800 font-medium">
+                  Forgot password?
+                </button>
+              </div>
               <div className="relative">
                 <input
                   type={showPw ? "text" : "password"}

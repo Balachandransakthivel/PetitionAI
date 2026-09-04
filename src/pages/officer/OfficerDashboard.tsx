@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Search, Filter, CheckCircle, Clock, AlertTriangle, BarChart3 } from "lucide-react";
+import { Search, Filter, CheckCircle, Clock, AlertTriangle, BarChart3, Download, FileSpreadsheet } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useComplaints } from "@/hooks/useComplaints";
 import { Link } from "react-router-dom";
 import { cn, statusClass, statusLabel, priorityClass, formatDate } from "@/lib/utils";
 import { ComplaintStatus, Priority } from "@/types";
+import SLABadge from "@/components/features/SLABadge";
+import { exportComplaintsToExcel } from "@/lib/excelExport";
 
 export default function OfficerDashboard() {
   const { user } = useAuth();
@@ -13,10 +15,9 @@ export default function OfficerDashboard() {
   const [statusFilter, setStatusFilter] = useState<ComplaintStatus | "all">("all");
   const [priorityFilter, setPriorityFilter] = useState<Priority | "all">("all");
 
-  // Officer sees complaints assigned to their department or to them
   const deptComplaints = complaints.filter(c =>
     c.assignedDepartment === user?.department ||
-    c.assignedOfficer === "o1" // officer demo
+    c.assignedOfficer === "o1"
   );
 
   const filtered = deptComplaints.filter(c => {
@@ -29,25 +30,44 @@ export default function OfficerDashboard() {
   const pending = deptComplaints.filter(c => !["resolved", "closed"].includes(c.status));
   const resolved = deptComplaints.filter(c => ["resolved", "closed"].includes(c.status));
   const critical = deptComplaints.filter(c => c.priority === "critical");
+  const overdue = deptComplaints.filter(c => {
+    const sla = getSLAStatusLocal(c);
+    return sla.isOverdue;
+  });
+
+  function getSLAStatusLocal(c: typeof deptComplaints[0]) {
+    const SLA_DEADLINES: Record<string, number> = { critical: 24, high: 72, medium: 168, low: 336 };
+    const deadlineMs = SLA_DEADLINES[c.priority] * 60 * 60 * 1000;
+    const deadline = new Date(new Date(c.submittedAt).getTime() + deadlineMs);
+    const remaining = deadline.getTime() - Date.now();
+    const isResolved = c.status === "resolved" || c.status === "closed";
+    return { isOverdue: !isResolved && remaining < 0 };
+  }
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-7">
-          <h1 className="font-serif text-2xl font-bold text-foreground">Officer Dashboard</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            {user?.name} · {user?.department || "Roads & Infrastructure"} Department
-          </p>
+        <div className="mb-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="font-serif text-2xl font-bold text-foreground">Officer Dashboard</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              {user?.name} · {user?.department || "Roads & Infrastructure"} Department
+            </p>
+          </div>
+          <button onClick={() => exportComplaintsToExcel(filtered)}
+            className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-2 rounded-md hover:bg-green-100 transition-colors font-medium">
+            <FileSpreadsheet className="w-3.5 h-3.5" /> Export to Excel
+          </button>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-7">
           {[
             { label: "Assigned", value: deptComplaints.length, icon: BarChart3, color: "text-navy-600 bg-navy-50" },
             { label: "Pending Action", value: pending.length, icon: Clock, color: "text-amber-600 bg-amber-50" },
             { label: "Resolved", value: resolved.length, icon: CheckCircle, color: "text-green-600 bg-green-50" },
             { label: "Critical", value: critical.length, icon: AlertTriangle, color: "text-red-600 bg-red-50" },
+            { label: "Overdue (SLA)", value: overdue.length, icon: AlertTriangle, color: "text-orange-600 bg-orange-50" },
           ].map(s => (
             <div key={s.label} className="card-base p-4">
               <div className="flex items-center justify-between mb-2">
@@ -115,6 +135,7 @@ export default function OfficerDashboard() {
                     <p className="text-xs text-muted-foreground mt-0.5">{c.submittedByName} · {c.location} · {formatDate(c.submittedAt)}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                    <SLABadge complaint={c} showDeadline={false} />
                     <span className="text-xs font-semibold px-2 py-1 rounded border bg-navy-50 text-navy-700 border-navy-200">
                       {Math.round(c.aiAnalysis.categoryConfidence * 100)}% AI
                     </span>

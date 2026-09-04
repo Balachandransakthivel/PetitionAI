@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Search, Filter, FileText } from "lucide-react";
+import { Search, Filter, FileText, Download, FileSpreadsheet, CheckSquare, Square, Trash2, ArrowUpCircle } from "lucide-react";
 import { useComplaints } from "@/hooks/useComplaints";
 import { Link } from "react-router-dom";
 import { cn, statusClass, statusLabel, priorityClass, formatDate } from "@/lib/utils";
 import { ComplaintStatus, Priority } from "@/types";
 import { DEPARTMENTS, OFFICERS } from "@/constants/mockData";
 import { useNotifications } from "@/hooks/useNotifications";
+import { exportComplaintsToExcel } from "@/lib/excelExport";
+import SLABadge from "@/components/features/SLABadge";
 
 export default function AdminComplaints() {
   const { complaints, updateComplaint } = useComplaints();
@@ -16,6 +18,8 @@ export default function AdminComplaints() {
   const [deptFilter, setDeptFilter] = useState("all");
   const [assigningId, setAssigningId] = useState<string | null>(null);
   const [selectedOfficer, setSelectedOfficer] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState<ComplaintStatus>("in_progress");
 
   const filtered = complaints.filter(c => {
     const ms = statusFilter === "all" || c.status === statusFilter;
@@ -24,6 +28,46 @@ export default function AdminComplaints() {
     const mq = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.petitionId.toLowerCase().includes(search.toLowerCase());
     return ms && mp && md && mq;
   });
+
+  function toggleSelect(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map(c => c.id)));
+    }
+  }
+
+  function bulkUpdateStatus() {
+    selectedIds.forEach(id => {
+      const c = complaints.find(x => x.id === id);
+      if (c) {
+        updateComplaint(id, {
+          status: bulkStatus,
+          statusHistory: [
+            ...c.statusHistory,
+            { status: bulkStatus, timestamp: new Date().toISOString(), note: `Bulk status update to ${statusLabel(bulkStatus)}`, updatedBy: "Admin" },
+          ],
+        });
+      }
+    });
+    setSelectedIds(new Set());
+  }
+
+  function exportSelected() {
+    const toExport = selectedIds.size > 0
+      ? complaints.filter(c => selectedIds.has(c.id))
+      : filtered;
+    exportComplaintsToExcel(toExport);
+  }
 
   function assignOfficer(cId: string) {
     const officer = OFFICERS.find(o => o.id === selectedOfficer);
@@ -48,10 +92,37 @@ export default function AdminComplaints() {
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="font-serif text-2xl font-bold text-foreground">Complaint Management</h1>
-          <p className="text-muted-foreground text-sm mt-1">{filtered.length} of {complaints.length} complaints shown</p>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="font-serif text-2xl font-bold text-foreground">Complaint Management</h1>
+            <p className="text-muted-foreground text-sm mt-1">{filtered.length} of {complaints.length} complaints shown</p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={exportSelected}
+              className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-2 rounded-md hover:bg-green-100 transition-colors font-medium">
+              <FileSpreadsheet className="w-3.5 h-3.5" /> {selectedIds.size > 0 ? `Export ${selectedIds.size} Selected` : "Export All"}
+            </button>
+          </div>
         </div>
+
+        {/* Bulk Operations Bar */}
+        {selectedIds.size > 0 && (
+          <div className="bg-navy-50 border border-navy-200 rounded-lg p-3 mb-4 flex items-center gap-3 flex-wrap">
+            <span className="text-sm font-semibold text-navy-800">{selectedIds.size} selected</span>
+            <select value={bulkStatus} onChange={e => setBulkStatus(e.target.value as ComplaintStatus)}
+              className="text-xs border border-border rounded-md px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-navy-400">
+              {(["under_review", "assigned", "in_progress", "resolved", "closed"] as const).map(s => (
+                <option key={s} value={s}>{statusLabel(s)}</option>
+              ))}
+            </select>
+            <button onClick={bulkUpdateStatus}
+              className="text-xs bg-navy-800 text-white px-3 py-1.5 rounded-md hover:bg-navy-700 transition-colors flex items-center gap-1">
+              <ArrowUpCircle className="w-3.5 h-3.5" /> Bulk Update
+            </button>
+            <button onClick={() => setSelectedIds(new Set())}
+              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5">Clear</button>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="card-base p-4 mb-5 space-y-3">
@@ -90,11 +161,19 @@ export default function AdminComplaints() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-navy-800 text-white">
+                  <th className="text-left px-4 py-3 text-xs font-semibold w-8">
+                    <button onClick={toggleSelectAll} className="flex items-center justify-center">
+                      {selectedIds.size === filtered.length && filtered.length > 0
+                        ? <CheckSquare className="w-4 h-4" />
+                        : <Square className="w-4 h-4" />}
+                    </button>
+                  </th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Petition ID</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Title</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">AI Category</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Priority</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold">SLA</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Officer</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Date</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold">Actions</th>
@@ -102,11 +181,18 @@ export default function AdminComplaints() {
               </thead>
               <tbody className="divide-y divide-border">
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={8} className="text-center py-10 text-muted-foreground">No complaints found.</td></tr>
+                  <tr><td colSpan={10} className="text-center py-10 text-muted-foreground">No complaints found.</td></tr>
                 ) : (
                   filtered.map(c => (
                     <>
                       <tr key={c.id} className="hover:bg-muted transition-colors">
+                        <td className="px-4 py-3">
+                          <button onClick={() => toggleSelect(c.id)} className="flex items-center justify-center">
+                            {selectedIds.has(c.id)
+                              ? <CheckSquare className="w-4 h-4 text-navy-600" />
+                              : <Square className="w-4 h-4 text-muted-foreground" />}
+                          </button>
+                        </td>
                         <td className="px-4 py-3">
                           <Link to={`/admin/complaint/${c.id}`} className="font-mono text-xs text-navy-600 hover:text-navy-800 font-bold">{c.petitionId}</Link>
                         </td>
@@ -123,6 +209,9 @@ export default function AdminComplaints() {
                         </td>
                         <td className="px-4 py-3">
                           <span className={cn("text-xs font-semibold px-2 py-0.5 rounded border", statusClass(c.status))}>{statusLabel(c.status)}</span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <SLABadge complaint={c} showDeadline={false} />
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           {c.assignedOfficerName || <span className="text-amber-600">Unassigned</span>}
@@ -142,7 +231,7 @@ export default function AdminComplaints() {
                       </tr>
                       {assigningId === c.id && (
                         <tr className="bg-purple-50">
-                          <td colSpan={8} className="px-4 py-3">
+                          <td colSpan={10} className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <select value={selectedOfficer} onChange={e => setSelectedOfficer(e.target.value)}
                                 className="border border-border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-navy-400">

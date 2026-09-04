@@ -4,6 +4,7 @@ import { Bell, LogOut, User, Menu, X, ChevronDown, Shield } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useNotifications } from "@/hooks/useNotifications";
 import NotificationPanel from "@/components/features/NotificationPanel";
+import DarkModeToggle from "@/components/features/DarkModeToggle";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -64,6 +65,7 @@ export default function Navbar() {
           {/* Right Actions */}
           {user ? (
             <div className="flex items-center gap-2">
+              <DarkModeToggle />
               {/* Notification Bell */}
               <div className="relative">
                 <button

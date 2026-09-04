@@ -4,6 +4,7 @@ import { useComplaints } from "@/hooks/useComplaints";
 import { DEPARTMENTS, OFFICERS } from "@/constants/mockData";
 import { ANALYTICS_DATA } from "@/constants/mockData";
 import { cn, statusClass, statusLabel, priorityClass, formatDate } from "@/lib/utils";
+import ComplaintMap from "@/components/features/ComplaintMap";
 
 export default function AdminDashboard() {
   const { complaints } = useComplaints();
@@ -48,6 +49,11 @@ export default function AdminDashboard() {
               <p className="text-xs text-muted-foreground mt-1">{s.sub}</p>
             </div>
           ))}
+        </div>
+
+        {/* Map */}
+        <div className="mb-7">
+          <ComplaintMap complaints={complaints} height="350px" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
