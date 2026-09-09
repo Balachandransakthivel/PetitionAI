@@ -315,7 +315,7 @@ export default function SubmitPetition() {
                 value={form.category}
                 onChange={e => update("category", e.target.value)}
                 required
-                className="w-full border border-border rounded-md pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 appearance-none bg-white"
+                className="w-full border border-border rounded-md pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 appearance-none bg-card text-foreground"
               >
                 <option value="">Select a category</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
@@ -415,7 +415,7 @@ export default function SubmitPetition() {
                   {files.map((uploadedFile, index) => (
                     <div
                       key={index}
-                      className="relative group border border-border rounded-md p-2 bg-white"
+                      className="relative group border border-border rounded-md p-2 bg-card"
                     >
                       {uploadedFile.preview ? (
                         <img
@@ -424,8 +424,8 @@ export default function SubmitPetition() {
                           className="w-full h-16 object-cover rounded mb-1"
                         />
                       ) : (
-                        <div className="w-full h-16 flex items-center justify-center bg-gray-100 rounded mb-1">
-                          <FileIcon className="w-6 h-6 text-gray-400" />
+                        <div className="w-full h-16 flex items-center justify-center bg-muted rounded mb-1">
+                          <FileIcon className="w-6 h-6 text-muted-foreground" />
                         </div>
                       )}
                       <p className="text-xs text-muted-foreground truncate" title={uploadedFile.file.name}>

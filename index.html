@@ -10,6 +10,20 @@
     <meta name="description" content="An AI-powered civic grievance platform that automates complaint classification, prioritization, tracking, and citizen support for faster and more efficient resolution." />
     <meta name="keywords" content="petition, complaint, grievance, AI classification, government, citizen services, complaint tracking" />
 
+    <script>
+      (function() {
+        try {
+          const theme = localStorage.getItem("petitionai-theme");
+          const isDark = theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (isDark) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <meta property="og:type" content="website" />
     <meta property="og:title" content="PetitionAI — Intelligent Petition Classification & Resolution" />
     <meta property="og:description" content="AI-powered civic grievance platform with automatic classification, duplicate detection, priority prediction, and real-time tracking." />
@@ -24,7 +38,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
 
     <script type="application/ld+json">
     {

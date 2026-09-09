@@ -2,6 +2,8 @@
 export * from "./user";
 export * from "./petition";
 export * from "./ai";
+export * from "./comment";
+export * from "./escalation";
 
 export interface Notification {
   id: string;

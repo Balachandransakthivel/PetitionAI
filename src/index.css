@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,24 +29,24 @@
   }
 
   .dark {
-    --background: 222 47% 8%;
-    --foreground: 210 40% 92%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 92%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 92%;
-    --primary: 210 40% 92%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 92%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 55%;
+    --background: 222 47% 7%;
+    --foreground: 210 40% 95%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 95%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 210 40% 95%;
+    --primary-foreground: 222 47% 10%;
+    --secondary: 217 33% 15%;
+    --secondary-foreground: 210 40% 95%;
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 65%;
     --accent: 38 92% 50%;
     --accent-foreground: 222 47% 11%;
     --destructive: 0 63% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
     --ring: 210 40% 92%;
   }
 }
@@ -54,90 +56,120 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', Inter, sans-serif;
     font-size: 16px;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer components {
+  /* Navigation */
   .nav-link {
-    @apply text-white/80 hover:text-white transition-colors duration-200 text-sm font-medium;
+    @apply text-white/75 hover:text-white transition-colors duration-200 text-sm font-medium relative;
   }
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gold-400 rounded-full transition-all duration-200;
+  }
+  .nav-link:hover::after {
+    @apply w-3/4;
+  }
+
+  /* Buttons */
   .btn-primary {
-    @apply bg-primary text-white hover:bg-navy-800 font-semibold py-2.5 px-6 rounded-md transition-all duration-200 hover:shadow-md active:scale-[0.98];
+    @apply bg-navy-800 dark:bg-gold-500 dark:text-navy-950 text-white hover:bg-navy-900 dark:hover:bg-gold-400 font-semibold py-2.5 px-6 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-navy-900/20 active:scale-[0.98] relative overflow-hidden;
   }
   .btn-secondary {
-    @apply bg-white text-primary border border-primary/30 hover:bg-navy-50 font-semibold py-2.5 px-6 rounded-md transition-all duration-200;
+    @apply bg-white dark:bg-gray-800 text-navy-800 dark:text-gray-100 border border-navy-200 dark:border-gray-700 hover:border-navy-300 dark:hover:border-gray-600 hover:bg-navy-50 dark:hover:bg-gray-700 font-semibold py-2.5 px-6 rounded-full transition-all duration-200 hover:shadow-md;
   }
+  .btn-ghost {
+    @apply text-navy-700 dark:text-navy-300 hover:bg-navy-50 dark:hover:bg-navy-900/40 font-medium py-2 px-4 rounded-full transition-all duration-200;
+  }
+
+  /* Cards */
   .card-base {
-    @apply bg-white rounded-lg border border-border shadow-sm;
+    @apply bg-card text-card-foreground rounded-3xl border border-border shadow-sm transition-all duration-200;
   }
-  .dark .card-base {
-    @apply bg-gray-900 border-gray-800;
+  .card-base:hover {
+    @apply shadow-md -translate-y-0.5;
   }
+
+  .card-premium {
+    @apply bg-card/90 backdrop-blur-md text-card-foreground rounded-3xl border border-border shadow-lg p-6;
+  }
+
+  /* Double Bezel Card */
+  .card-doppelrand {
+    @apply p-1.5 rounded-[1.75rem] bg-gradient-to-br from-gray-50 to-gray-100/60 dark:from-gray-800/40 dark:to-gray-900/60 border border-gray-200/60 dark:border-gray-800/80;
+  }
+  .card-doppelrand-inner {
+    @apply bg-card text-card-foreground rounded-[1.375rem] p-6 border border-border/40;
+  }
+
+  /* Status badges */
   .status-submitted {
-    @apply bg-blue-100 text-blue-700 border border-blue-200;
-  }
-  .dark .status-submitted {
-    @apply bg-blue-900/30 text-blue-400 border-blue-800;
+    @apply bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60;
   }
   .status-review {
-    @apply bg-yellow-100 text-yellow-700 border border-yellow-200;
-  }
-  .dark .status-review {
-    @apply bg-yellow-900/30 text-yellow-400 border-yellow-800;
+    @apply bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60;
   }
   .status-assigned {
-    @apply bg-purple-100 text-purple-700 border border-purple-200;
-  }
-  .dark .status-assigned {
-    @apply bg-purple-900/30 text-purple-400 border-purple-800;
+    @apply bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/60;
   }
   .status-progress {
-    @apply bg-orange-100 text-orange-700 border border-orange-200;
-  }
-  .dark .status-progress {
-    @apply bg-orange-900/30 text-orange-400 border-orange-800;
+    @apply bg-orange-50 text-orange-700 border border-orange-200/60 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60;
   }
   .status-resolved {
-    @apply bg-green-100 text-green-700 border border-green-200;
-  }
-  .dark .status-resolved {
-    @apply bg-green-900/30 text-green-400 border-green-800;
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60;
   }
   .status-closed {
-    @apply bg-gray-100 text-gray-700 border border-gray-200;
+    @apply bg-gray-100 text-gray-600 border border-gray-200/60 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700/60;
   }
-  .dark .status-closed {
-    @apply bg-gray-800 text-gray-400 border-gray-700;
-  }
+
+  /* Priority badges */
   .priority-critical {
-    @apply bg-red-100 text-red-700 border border-red-200;
-  }
-  .dark .priority-critical {
-    @apply bg-red-900/30 text-red-400 border-red-800;
+    @apply bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/60;
   }
   .priority-high {
-    @apply bg-orange-100 text-orange-700 border border-orange-200;
-  }
-  .dark .priority-high {
-    @apply bg-orange-900/30 text-orange-400 border-orange-800;
+    @apply bg-orange-50 text-orange-700 border border-orange-200/60 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60;
   }
   .priority-medium {
-    @apply bg-yellow-100 text-yellow-700 border border-yellow-200;
-  }
-  .dark .priority-medium {
-    @apply bg-yellow-900/30 text-yellow-400 border-yellow-800;
+    @apply bg-yellow-50 text-yellow-700 border border-yellow-200/60 dark:bg-yellow-950/40 dark:text-yellow-300 dark:border-yellow-800/60;
   }
   .priority-low {
-    @apply bg-green-100 text-green-700 border border-green-200;
+    @apply bg-green-50 text-green-700 border border-green-200/60 dark:bg-green-950/40 dark:text-green-300 dark:border-green-800/60;
   }
-  .dark .priority-low {
-    @apply bg-green-900/30 text-green-400 border-green-800;
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply relative overflow-hidden bg-muted rounded-xl;
   }
-  /* Dark mode nav link */
-  .dark .nav-link {
-    @apply text-white/70 hover:text-white;
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-navy-700 via-navy-600 to-gold-600 dark:from-navy-200 dark:via-navy-100 dark:to-gold-300 bg-clip-text text-transparent;
+  }
+
+  /* Glass morphism */
+  .glass {
+    @apply bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border border-white/20 dark:border-gray-800/40;
+  }
+
+  .noise-overlay {
+    position: relative;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }

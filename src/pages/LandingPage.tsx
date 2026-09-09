@@ -1,177 +1,365 @@
 import { Link } from "react-router-dom";
-import { Shield, Brain, FileText, Bell, BarChart3, Users, CheckCircle, ArrowRight, Building2, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import {
+  Shield, Brain, FileText, Bell, BarChart3, Users, CheckCircle,
+  ArrowRight, Building2, Zap, Globe, Sparkles, ArrowUpRight,
+  ChevronRight, Star, Clock, TrendingUp
+} from "lucide-react";
 import heroBanner from "@/assets/hero-banner.jpg";
 
-const FEATURES = [
-  { icon: Brain, title: "AI Classification", desc: "Complaints are automatically classified with 90%+ accuracy using NLP and semantic analysis.", color: "bg-blue-50 text-blue-600" },
-  { icon: Building2, title: "Auto Department Routing", desc: "AI predicts and routes complaints to the correct department without manual intervention.", color: "bg-purple-50 text-purple-600" },
-  { icon: Zap, title: "Priority & Sentiment", desc: "Every complaint is assigned a priority score and sentiment analysis for faster resolution.", color: "bg-amber-50 text-amber-600" },
-  { icon: FileText, title: "Duplicate Detection", desc: "Semantic similarity engine detects and consolidates duplicate complaints automatically.", color: "bg-rose-50 text-rose-600" },
-  { icon: Bell, title: "Real-Time Notifications", desc: "Citizens receive instant email and in-app notifications at every status change.", color: "bg-green-50 text-green-600" },
-  { icon: BarChart3, title: "Analytics Dashboard", desc: "Admins get comprehensive reports on complaint trends, officer performance, and resolution metrics.", color: "bg-navy-50 text-navy-600" },
-];
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
-const DEMO_CREDS = [
-  { role: "Citizen", email: "citizen@demo.com", password: "citizen123", color: "border-blue-200 bg-blue-50", badge: "bg-blue-600" },
-  { role: "Officer", email: "officer@demo.com", password: "officer123", color: "border-purple-200 bg-purple-50", badge: "bg-purple-600" },
-  { role: "Admin", email: "admin@demo.com", password: "admin123", color: "border-amber-200 bg-amber-50", badge: "bg-amber-600" },
-];
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.05 },
+  },
+};
 
-const STEPS = [
-  { n: "01", title: "Citizen Submits Petition", desc: "Fills in description, category, and location." },
-  { n: "02", title: "AI Analysis", desc: "Classifies, prioritises, detects duplicates, routes to department." },
-  { n: "03", title: "Officer Action", desc: "Reviews AI results, updates status, adds remarks." },
-  { n: "04", title: "Resolution & Closure", desc: "Citizen is notified, provides feedback, petition closed." },
-];
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+};
+
+function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      variants={staggerContainer}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function LandingPage() {
+  const { t } = useTranslation();
+
+  const FEATURES = [
+    { icon: Brain, title: "AI Classification", desc: "Complaints are automatically classified with 90%+ accuracy using NLP and semantic analysis.", color: "from-blue-500 to-blue-600" },
+    { icon: Building2, title: "Auto Department Routing", desc: "AI predicts and routes complaints to the correct department without manual intervention.", color: "from-purple-500 to-purple-600" },
+    { icon: Zap, title: "Priority & Sentiment", desc: "Every complaint is assigned a priority score and sentiment analysis for faster resolution.", color: "from-amber-500 to-orange-500" },
+    { icon: FileText, title: "Duplicate Detection", desc: "Semantic similarity engine detects and consolidates duplicate complaints automatically.", color: "from-rose-500 to-pink-500" },
+    { icon: Bell, title: "Real-Time Notifications", desc: "Citizens receive instant email and in-app notifications at every status change.", color: "from-emerald-500 to-green-500" },
+    { icon: BarChart3, title: "Analytics Dashboard", desc: "Admins get comprehensive reports on complaint trends, officer performance, and resolution metrics.", color: "from-navy-600 to-navy-700" },
+  ];
+
+  const DEMO_CREDS = [
+    { role: "Citizen", email: "citizen@demo.com", password: "citizen123", gradient: "from-blue-500 to-indigo-600", icon: Users },
+    { role: "Officer", email: "officer@demo.com", password: "officer123", gradient: "from-purple-500 to-violet-600", icon: Shield },
+    { role: "Admin", email: "admin@demo.com", password: "admin123", gradient: "from-amber-500 to-orange-500", icon: BarChart3 },
+  ];
+
+  const STEPS = [
+    { n: "01", title: "Citizen Submits Petition", desc: "Fills in description, category, and location with file uploads.", icon: FileText },
+    { n: "02", title: "AI Analysis", desc: "Classifies, prioritises, detects duplicates, routes to department.", icon: Brain },
+    { n: "03", title: "Officer Action", desc: "Reviews AI results, updates status, adds remarks.", icon: Shield },
+    { n: "04", title: "Resolution & Closure", desc: "Citizen is notified, provides feedback, petition closed.", icon: CheckCircle },
+  ];
+
+  const STATS = [
+    { value: "127+", label: t("landing.stats.petitions"), icon: FileText },
+    { value: "94%", label: t("landing.stats.accuracy"), icon: TrendingUp },
+    { value: "4.2 days", label: t("landing.stats.resolution"), icon: Clock },
+    { value: "8", label: t("landing.stats.departments"), icon: Building2 },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="relative bg-navy-900 text-white overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
+      {/* Hero Section */}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Background */}
         <div className="absolute inset-0">
-          <img src={heroBanner} alt="AI Petition Portal" className="w-full h-full object-cover opacity-20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-900/80 to-navy-800/60" />
+          <img src={heroBanner} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-950/95 via-navy-900/90 to-navy-800/80 dark:from-navy-950/98 dark:via-navy-950/95 dark:to-navy-900/90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-transparent" />
+          {/* Subtle ambient light */}
+          <div className="absolute top-1/4 -right-20 w-80 h-80 bg-gold-400/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-navy-400/10 rounded-full blur-3xl pointer-events-none" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-gold-400/20 border border-gold-400/40 text-gold-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wider">
-              <Brain className="w-3.5 h-3.5" /> AI-Powered Grievance Platform
-            </div>
-            <h1 className="font-serif text-4xl lg:text-5xl font-bold leading-tight mb-5">
-              Intelligent Petition Classification & Resolution
-            </h1>
-            <p className="text-navy-200 text-lg leading-relaxed mb-8">
-              An AI-driven civic grievance portal that automates complaint classification, duplicate detection, priority prediction, and department routing — delivering faster resolution for every citizen.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/register" className="bg-gold-400 hover:bg-gold-300 text-navy-900 font-bold px-6 py-3 rounded-md transition-all hover:shadow-lg flex items-center gap-2">
-                Submit a Petition <ArrowRight className="w-4 h-4" />
+
+        <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-28 w-full">
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-gold-300 text-xs font-semibold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+                <Sparkles className="w-3.5 h-3.5" />
+                {t("landing.badge")}
+              </div>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6"
+            >
+              {t("landing.heroTitle")}
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="text-navy-100 text-base lg:text-lg leading-relaxed mb-8 max-w-2xl"
+            >
+              {t("landing.heroDesc")}
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              className="flex flex-wrap gap-4"
+            >
+              <Link to="/register" className="group bg-gold-400 hover:bg-gold-300 text-navy-900 font-bold px-7 py-3.5 rounded-full transition-all duration-200 hover:shadow-xl hover:shadow-gold-400/20 flex items-center gap-3 text-base active:scale-[0.98]">
+                {t("landing.cta")}
+                <span className="w-7 h-7 rounded-full bg-navy-900/10 flex items-center justify-center group-hover:translate-x-1 transition-transform duration-200">
+                  <ArrowRight className="w-4 h-4" />
+                </span>
               </Link>
-              <Link to="/login" className="border border-white/30 hover:bg-white/10 text-white font-semibold px-6 py-3 rounded-md transition-all flex items-center gap-2">
+              <Link to="/login" className="border border-white/30 hover:border-white/60 hover:bg-white/10 text-white font-semibold px-7 py-3.5 rounded-full transition-all duration-200 flex items-center gap-2 backdrop-blur-sm">
                 Sign In
+                <ArrowUpRight className="w-4 h-4 opacity-70" />
               </Link>
-            </div>
-            <div className="flex flex-wrap gap-6 mt-10">
-              {[["127+", "Petitions Filed"], ["94%", "AI Accuracy"], ["4.2 days", "Avg. Resolution"], ["8", "Departments"]].map(([v, l]) => (
-                <div key={l}>
-                  <p className="text-2xl font-bold text-gold-300">{v}</p>
-                  <p className="text-xs text-navy-300">{l}</p>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-white/10"
+            >
+              {STATS.map((stat) => (
+                <div key={stat.label} className="group">
+                  <div className="flex items-center gap-2 mb-1">
+                    <stat.icon className="w-4 h-4 text-gold-400/80" />
+                    <p className="text-2xl lg:text-3xl font-display font-extrabold text-gold-300">{stat.value}</p>
+                  </div>
+                  <p className="text-xs text-navy-200/90 uppercase tracking-wider font-medium">{stat.label}</p>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 bg-white">
+      {/* Features Section */}
+      <section className="py-20 lg:py-28 bg-white dark:bg-background border-b border-border/40 relative transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl font-bold text-foreground mb-3">Platform Features</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Combining AI intelligence with government accountability for smarter grievance management.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map(f => (
-              <div key={f.title} className="card-base p-6 hover:shadow-md transition-shadow">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${f.color}`}>
-                  <f.icon className="w-5 h-5" />
+          <AnimatedSection className="text-center mb-14">
+            <motion.div variants={fadeInUp}>
+              <span className="inline-flex items-center gap-1.5 bg-navy-50 dark:bg-navy-900/60 text-navy-700 dark:text-navy-300 text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                <Star className="w-3 h-3" /> Features
+              </span>
+            </motion.div>
+            <motion.h2 variants={fadeInUp} className="font-display text-3xl lg:text-4xl font-extrabold text-foreground mb-4">
+              {t("landing.featuresTitle")}
+            </motion.h2>
+            <motion.p variants={fadeInUp} className="text-muted-foreground text-base lg:text-lg max-w-2xl mx-auto">
+              {t("landing.featuresDesc")}
+            </motion.p>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURES.map((f) => (
+              <motion.div
+                key={f.title}
+                variants={scaleIn}
+                className="group"
+              >
+                <div className="card-doppelrand h-full">
+                  <div className="card-doppelrand-inner h-full flex flex-col">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                      <f.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="font-display font-bold text-lg text-foreground mb-2 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
+                      {f.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-1">{f.desc}</p>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Flow */}
-      <section className="py-20 bg-navy-900 text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl font-bold mb-3">How It Works</h2>
-            <p className="text-navy-300">From submission to resolution — powered by AI every step.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* How It Works */}
+      <section className="py-20 lg:py-28 bg-gradient-to-b from-navy-900 to-navy-950 dark:from-navy-950 dark:to-background text-white relative overflow-hidden transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <AnimatedSection className="text-center mb-14">
+            <motion.div variants={fadeInUp}>
+              <span className="inline-flex items-center gap-1.5 bg-white/10 text-gold-300 text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                <Zap className="w-3 h-3" /> Process
+              </span>
+            </motion.div>
+            <motion.h2 variants={fadeInUp} className="font-display text-3xl lg:text-4xl font-extrabold mb-4">
+              {t("landing.howItWorks")}
+            </motion.h2>
+            <motion.p variants={fadeInUp} className="text-navy-200 text-base lg:text-lg max-w-xl mx-auto">
+              {t("landing.howItWorksDesc")}
+            </motion.p>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
             {STEPS.map((s, i) => (
-              <div key={i} className="relative">
-                <div className="bg-navy-800 border border-navy-700 rounded-lg p-5">
-                  <div className="text-3xl font-black text-gold-400/30 mb-2">{s.n}</div>
-                  <h3 className="font-semibold text-white mb-2">{s.title}</h3>
-                  <p className="text-sm text-navy-300">{s.desc}</p>
+              <motion.div
+                key={i}
+                variants={fadeInUp}
+                className="relative group"
+              >
+                <div className="bg-white/5 dark:bg-card/40 backdrop-blur-sm border border-white/10 dark:border-border/40 rounded-3xl p-6 hover:bg-white/10 dark:hover:bg-card/60 transition-all duration-200">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center mb-4 shadow-md shadow-gold-400/20 group-hover:scale-105 transition-transform duration-200">
+                    <s.icon className="w-6 h-6 text-navy-900" />
+                  </div>
+                  <div className="text-xs font-bold text-gold-400/80 mb-2 tracking-widest">{s.n}</div>
+                  <h3 className="font-display font-bold text-lg text-white mb-2">{s.title}</h3>
+                  <p className="text-sm text-navy-200 dark:text-muted-foreground leading-relaxed">{s.desc}</p>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 z-10">
-                    <ArrowRight className="w-5 h-5 text-gold-400" />
+                  <div className="hidden lg:flex absolute top-20 -right-3 z-10 w-6 h-6 bg-navy-800 border border-navy-600 rounded-full items-center justify-center">
+                    <ChevronRight className="w-3 h-3 text-gold-400" />
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Demo Login */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-3xl font-bold text-foreground mb-3">Try the Demo</h2>
-            <p className="text-muted-foreground">Use these credentials to explore each role in the system.</p>
-          </div>
+      <section className="py-20 lg:py-28 bg-gradient-to-b from-gray-50 to-white dark:from-background dark:to-card/20 border-b border-border/40 transition-colors duration-200">
+        <div className="max-w-5xl mx-auto px-6">
+          <AnimatedSection className="text-center mb-14">
+            <motion.div variants={fadeInUp}>
+              <span className="inline-flex items-center gap-1.5 bg-gold-50 dark:bg-gold-950/40 text-gold-700 dark:text-gold-300 text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                <Globe className="w-3 h-3" /> Demo
+              </span>
+            </motion.div>
+            <motion.h2 variants={fadeInUp} className="font-display text-3xl lg:text-4xl font-extrabold text-foreground mb-4">
+              {t("landing.tryDemo")}
+            </motion.h2>
+            <motion.p variants={fadeInUp} className="text-muted-foreground text-base max-w-xl mx-auto">
+              {t("landing.tryDemoDesc")}
+            </motion.p>
+          </AnimatedSection>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {DEMO_CREDS.map(d => (
-              <div key={d.role} className={`border rounded-lg p-5 ${d.color}`}>
-                <span className={`text-white text-xs font-bold px-2 py-1 rounded ${d.badge} uppercase`}>{d.role}</span>
-                <div className="mt-4 space-y-1.5">
-                  <p className="text-xs text-muted-foreground">Email: <span className="font-mono text-foreground">{d.email}</span></p>
-                  <p className="text-xs text-muted-foreground">Password: <span className="font-mono text-foreground">{d.password}</span></p>
+            {DEMO_CREDS.map((d) => (
+              <motion.div
+                key={d.role}
+                variants={scaleIn}
+                className="group"
+              >
+                <div className="card-doppelrand h-full">
+                  <div className="card-doppelrand-inner text-center h-full flex flex-col justify-between">
+                    <div>
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${d.gradient} flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                        <d.icon className="w-7 h-7 text-white" />
+                      </div>
+                      <h3 className="font-display font-bold text-xl text-foreground mb-3">{d.role}</h3>
+                      <div className="space-y-1.5 mb-5 bg-muted/40 p-3 rounded-xl border border-border/40">
+                        <p className="text-xs text-muted-foreground">
+                          Email: <span className="font-mono text-foreground font-semibold">{d.email}</span>
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Password: <span className="font-mono text-foreground font-semibold">{d.password}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      to="/login"
+                      className="inline-flex items-center justify-center gap-2 text-sm font-bold text-navy-700 dark:text-gold-400 hover:text-navy-900 dark:hover:text-gold-300 transition-colors group/link"
+                    >
+                      Login as {d.role}
+                      <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
-                <Link to="/login" className="mt-4 block text-center text-sm font-semibold text-navy-700 hover:text-navy-900 transition-colors">
-                  Login as {d.role} →
-                </Link>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Roles */}
-      <section className="py-20 bg-muted">
+      <section className="py-20 lg:py-28 bg-white dark:bg-background transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="font-serif text-3xl font-bold text-foreground mb-3">Role-Based Access</h2>
-          </div>
+          <AnimatedSection className="text-center mb-14">
+            <motion.div variants={fadeInUp}>
+              <span className="inline-flex items-center gap-1.5 bg-navy-50 dark:bg-navy-900/60 text-navy-700 dark:text-navy-300 text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest mb-4">
+                <Shield className="w-3 h-3" /> Access Control
+              </span>
+            </motion.div>
+            <motion.h2 variants={fadeInUp} className="font-display text-3xl lg:text-4xl font-extrabold text-foreground">
+              {t("landing.rolesTitle")}
+            </motion.h2>
+          </AnimatedSection>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { icon: Users, role: "Citizens", color: "text-blue-600", items: ["Register & login securely", "Submit petitions with file uploads", "Track status in real time", "Receive notifications", "Provide feedback after resolution"] },
-              { icon: Shield, role: "Officers", color: "text-purple-600", items: ["View assigned complaints", "See full AI analysis", "Update complaint status", "Add remarks & resolution proof", "Escalate critical cases"] },
-              { icon: BarChart3, role: "Administrators", color: "text-amber-600", items: ["Manage all users & officers", "Monitor all complaints", "Assign officers to cases", "View analytics & reports", "Manage departments & categories"] },
-            ].map(r => (
-              <div key={r.role} className="card-base p-6">
-                <r.icon className={`w-8 h-8 ${r.color} mb-4`} />
-                <h3 className="font-serif font-bold text-lg text-foreground mb-4">{r.role}</h3>
-                <ul className="space-y-2">
-                  {r.items.map(item => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0 mt-0.5" /> {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              { icon: Users, role: "Citizens", color: "from-blue-500 to-indigo-600", items: ["Register & login securely", "Submit petitions with file uploads", "Track status in real time", "Receive notifications", "Provide feedback after resolution"] },
+              { icon: Shield, role: "Officers", color: "from-purple-500 to-violet-600", items: ["View assigned complaints", "See full AI analysis", "Update complaint status", "Add remarks & resolution proof", "Escalate critical cases"] },
+              { icon: BarChart3, role: "Administrators", color: "from-amber-500 to-orange-500", items: ["Manage all users & officers", "Monitor all complaints", "Assign officers to cases", "View analytics & reports", "Manage departments & categories"] },
+            ].map((r) => (
+              <motion.div
+                key={r.role}
+                variants={fadeInUp}
+                className="group"
+              >
+                <div className="card-doppelrand h-full">
+                  <div className="card-doppelrand-inner h-full">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${r.color} flex items-center justify-center mb-5 shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                      <r.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="font-display font-bold text-xl text-foreground mb-4">{r.role}</h3>
+                    <ul className="space-y-3">
+                      {r.items.map(item => (
+                        <li key={item} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                          <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-navy-950 text-navy-300 py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-gold-400" />
-            <span className="font-serif font-bold text-white">PetitionAI</span>
+      <footer className="bg-navy-950 text-navy-300 py-12 border-t border-navy-900">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center shadow-sm">
+                <img src="/favicon.png" alt="PetitionAI" className="w-5 h-5 rounded object-cover" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="font-display font-bold text-white text-base tracking-tight leading-none">PetitionAI</span>
+                <span className="text-gold-400/90 text-[10px] font-semibold tracking-wider uppercase leading-none mt-1">Citizen Grievance Portal</span>
+              </div>
+            </div>
+            <p className="text-sm text-navy-400">Intelligent Petition Classification & Resolution System</p>
+            <p className="text-xs text-navy-500">&copy; {new Date().getFullYear()} PetitionAI. All rights reserved.</p>
           </div>
-          <p className="text-sm text-center">Intelligent Petition Classification & Resolution System</p>
-          <p className="text-xs text-navy-500">© {new Date().getFullYear()} PetitionAI. All rights reserved.</p>
         </div>
       </footer>
     </div>

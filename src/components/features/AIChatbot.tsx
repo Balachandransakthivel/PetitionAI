@@ -98,24 +98,24 @@ export default function AIChatbot() {
       {/* Chat Window */}
       {open && (
         <div className={cn(
-          "fixed right-6 z-50 w-80 bg-white rounded-xl shadow-2xl border border-border flex flex-col transition-all animate-slide-in-right",
+          "fixed right-6 z-50 w-80 bg-card text-card-foreground rounded-2xl shadow-2xl border border-border flex flex-col transition-all overflow-hidden",
           minimised ? "bottom-6 h-14" : "bottom-6 h-[480px]"
         )}>
           {/* Header */}
-          <div className="flex items-center gap-2.5 px-4 py-3 bg-navy-800 rounded-t-xl text-white flex-shrink-0">
+          <div className="flex items-center gap-2.5 px-4 py-3 bg-navy-800 dark:bg-navy-950 text-white flex-shrink-0">
             <div className="w-8 h-8 bg-gold-400 rounded-full flex items-center justify-center">
               <Bot className="w-4 h-4 text-navy-900" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold leading-none">PetitionAI Assistant</p>
-              <p className="text-[11px] text-green-400 mt-0.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" /> Online 24/7
+              <p className="text-[11px] text-emerald-400 mt-0.5 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block" /> Online 24/7
               </p>
             </div>
-            <button onClick={() => setMinimised(!minimised)} className="text-white/60 hover:text-white p-1 transition-colors">
+            <button type="button" onClick={() => setMinimised(!minimised)} className="text-white/70 hover:text-white p-1 transition-colors">
               <Minimize2 className="w-4 h-4" />
             </button>
-            <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white p-1 transition-colors">
+            <button type="button" onClick={() => setOpen(false)} className="text-white/70 hover:text-white p-1 transition-colors">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -123,33 +123,33 @@ export default function AIChatbot() {
           {!minimised && (
             <>
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              <div className="flex-1 overflow-y-auto p-3 space-y-3 bg-card">
                 {messages.map(m => (
                   <div key={m.id} className={cn("flex gap-2", m.role === "user" ? "justify-end" : "justify-start")}>
                     {m.role === "bot" && (
-                      <div className="w-6 h-6 bg-navy-700 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-6 h-6 bg-navy-700 dark:bg-navy-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                         <Bot className="w-3.5 h-3.5 text-white" />
                       </div>
                     )}
                     <div className={cn(
-                      "max-w-[85%] rounded-xl px-3 py-2 text-xs leading-relaxed whitespace-pre-line",
-                      m.role === "bot" ? "bg-muted text-foreground rounded-tl-none" : "bg-navy-700 text-white rounded-tr-none"
+                      "max-w-[85%] rounded-2xl px-3 py-2 text-xs leading-relaxed whitespace-pre-line shadow-sm",
+                      m.role === "bot" ? "bg-muted text-foreground rounded-tl-none" : "bg-navy-700 dark:bg-navy-800 text-white rounded-tr-none"
                     )}>
                       {m.text}
                     </div>
                     {m.role === "user" && (
-                      <div className="w-6 h-6 bg-navy-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <User className="w-3.5 h-3.5 text-navy-700" />
+                      <div className="w-6 h-6 bg-gold-400 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <User className="w-3.5 h-3.5 text-navy-900" />
                       </div>
                     )}
                   </div>
                 ))}
                 {typing && (
                   <div className="flex gap-2 items-center">
-                    <div className="w-6 h-6 bg-navy-700 rounded-full flex items-center justify-center">
+                    <div className="w-6 h-6 bg-navy-700 dark:bg-navy-800 rounded-full flex items-center justify-center">
                       <Bot className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <div className="bg-muted rounded-xl px-3 py-2 flex gap-1">
+                    <div className="bg-muted rounded-2xl px-3 py-2 flex gap-1">
                       {[0, 1, 2].map(i => (
                         <div key={i} className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                       ))}
@@ -160,12 +160,13 @@ export default function AIChatbot() {
               </div>
 
               {/* Quick Questions */}
-              <div className="px-3 pb-2 flex flex-wrap gap-1.5">
+              <div className="px-3 pb-2 flex flex-wrap gap-1.5 bg-card">
                 {QUICK_QUESTIONS.map(q => (
                   <button
                     key={q}
+                    type="button"
                     onClick={() => sendMessage(q)}
-                    className="text-[10px] bg-navy-50 text-navy-700 border border-navy-200 hover:bg-navy-100 px-2 py-1 rounded-full transition-colors"
+                    className="text-[10px] bg-navy-50 dark:bg-navy-900/60 text-navy-700 dark:text-navy-300 border border-navy-200 dark:border-navy-800 hover:bg-navy-100 dark:hover:bg-navy-800 px-2.5 py-1 rounded-full transition-colors"
                   >
                     {q}
                   </button>
@@ -173,19 +174,20 @@ export default function AIChatbot() {
               </div>
 
               {/* Input */}
-              <div className="border-t border-border p-3 flex gap-2">
+              <div className="border-t border-border p-3 flex gap-2 bg-card">
                 <input
                   type="text"
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && sendMessage(input)}
                   placeholder="Ask me anything..."
-                  className="flex-1 text-xs border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-navy-400"
+                  className="flex-1 text-xs bg-muted/50 dark:bg-muted/20 border border-border rounded-xl px-3 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-navy-400 dark:focus:ring-gold-400 transition-colors"
                 />
                 <button
+                  type="button"
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim()}
-                  className="w-8 h-8 bg-navy-700 hover:bg-navy-800 disabled:opacity-40 text-white rounded-lg flex items-center justify-center transition-colors"
+                  className="w-8 h-8 bg-navy-700 dark:bg-gold-500 hover:bg-navy-800 dark:hover:bg-gold-400 disabled:opacity-40 text-white dark:text-navy-950 rounded-xl flex items-center justify-center transition-colors"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>

@@ -1,0 +1,185 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+
+const resources = {
+  en: {
+    translation: {
+      nav: {
+        dashboard: "Dashboard",
+        submitPetition: "Submit Petition",
+        myPetitions: "My Petitions",
+        complaints: "Complaints",
+        users: "Users",
+        analytics: "Analytics",
+        signIn: "Sign In",
+        register: "Register",
+        profile: "My Profile",
+        signOut: "Sign Out",
+      },
+      landing: {
+        badge: "AI-Powered Grievance Platform",
+        heroTitle: "Intelligent Petition Classification & Resolution",
+        heroDesc: "An AI-driven civic grievance portal that automates complaint classification, duplicate detection, priority prediction, and department routing — delivering faster resolution for every citizen.",
+        cta: "Submit a Petition",
+        stats: {
+          petitions: "Petitions Filed",
+          accuracy: "AI Accuracy",
+          resolution: "Avg. Resolution",
+          departments: "Departments",
+        },
+        featuresTitle: "Platform Features",
+        featuresDesc: "Combining AI intelligence with government accountability for smarter grievance management.",
+        howItWorks: "How It Works",
+        howItWorksDesc: "From submission to resolution — powered by AI every step.",
+        tryDemo: "Try the Demo",
+        tryDemoDesc: "Use these credentials to explore each role in the system.",
+        rolesTitle: "Role-Based Access",
+      },
+      citizen: {
+        dashboard: "Citizen Dashboard",
+        submitPetition: "Submit Petition",
+        myPetitions: "My Petitions",
+        trackStatus: "Track Status",
+        feedback: "Feedback",
+      },
+      common: {
+        search: "Search",
+        filter: "Filter",
+        export: "Export",
+        save: "Save",
+        cancel: "Cancel",
+        delete: "Delete",
+        edit: "Edit",
+        view: "View",
+        loading: "Loading...",
+        noResults: "No results found",
+        submit: "Submit",
+        back: "Back",
+        next: "Next",
+        comments: "Comments",
+        addComment: "Add a comment...",
+        postComment: "Post",
+      },
+      status: {
+        submitted: "Submitted",
+        under_review: "Under Review",
+        assigned: "Assigned",
+        in_progress: "In Progress",
+        resolved: "Resolved",
+        closed: "Closed",
+      },
+      priority: {
+        critical: "Critical",
+        high: "High",
+        medium: "Medium",
+        low: "Low",
+      },
+      escalation: {
+        title: "Priority Escalation",
+        autoEscalate: "Auto-Escalate",
+        escalateTo: "Escalate to",
+        escalated: "Escalated",
+        escalationHistory: "Escalation History",
+      },
+    },
+  },
+  hi: {
+    translation: {
+      nav: {
+        dashboard: "डैशबोर्ड",
+        submitPetition: "याचिका दायर करें",
+        myPetitions: "मेरी याचिकाएँ",
+        complaints: "शिकायतें",
+        users: "उपयोगकर्ता",
+        analytics: "विश्लेषण",
+        signIn: "लॉग इन",
+        register: "रजिस्टर",
+        profile: "मेरी प्रोफ़ाइल",
+        signOut: "लॉग आउट",
+      },
+      landing: {
+        badge: "AI-संचालित शिकायत प्लेटफ़ॉर्म",
+        heroTitle: "बुद्धिमान याचिका वर्गीकरण और समाधान",
+        heroDesc: "एक AI-संचालित नागरिक शिकायत पोर्टल जो शिकायत वर्गीकरण, डुप्लिकेट पहचान, प्राथमिकता भविष्यवाणी और विभाग रूटिंग को स्वचालित करता है — हर नागरिक के लिए तेज़ समाधान प्रदान करता है।",
+        cta: "याचिका दायर करें",
+        stats: {
+          petitions: "दायर याचिकाएँ",
+          accuracy: "AI सटीकता",
+          resolution: "औसत समाधान",
+          departments: "विभाग",
+        },
+        featuresTitle: "प्लेटफ़ॉर्म सुविधाएँ",
+        featuresDesc: "स्मार्ट शिकायत प्रबंधन के लिए AI बुद्धिमत्ता और सरकारी जवाबदेही का संयोजन।",
+        howItWorks: "यह कैसे काम करता है",
+        howItWorksDesc: "दायर करने से समाधान तक — हर कदम पर AI द्वारा संचालित।",
+        tryDemo: "डेमो आज़माएँ",
+        tryDemoDesc: "सिस्टम में प्रत्येक भूमिका का पता लगाने के लिए इन क्रेडेंशियल्स का उपयोग करें।",
+        rolesTitle: "भूमिका-आधारित पहुँच",
+      },
+      citizen: {
+        dashboard: "नागरिक डैशबोर्ड",
+        submitPetition: "याचिका दायर करें",
+        myPetitions: "मेरी याचिकाएँ",
+        trackStatus: "स्थिति ट्रैक करें",
+        feedback: "प्रतिक्रिया",
+      },
+      common: {
+        search: "खोजें",
+        filter: "फ़िल्टर",
+        export: "निर्यात",
+        save: "सहेजें",
+        cancel: "रद्द करें",
+        delete: "हटाएँ",
+        edit: "संपादित करें",
+        view: "देखें",
+        loading: "लोड हो रहा है...",
+        noResults: "कोई परिणाम नहीं मिला",
+        submit: "जमा करें",
+        back: "वापस",
+        next: "अगला",
+        comments: "टिप्पणियाँ",
+        addComment: "टिप्पणी जोड़ें...",
+        postComment: "पोस्ट",
+      },
+      status: {
+        submitted: "दायर",
+        under_review: "समीक्षा में",
+        assigned: "सौंपा गया",
+        in_progress: "प्रगति में",
+        resolved: "समाधान",
+        closed: "बंद",
+      },
+      priority: {
+        critical: "गंभीर",
+        high: "उच्च",
+        medium: "मध्यम",
+        low: "निम्न",
+      },
+      escalation: {
+        title: "प्राथमिकता एस्केलेशन",
+        autoEscalate: "स्वतः एस्केलेट",
+        escalateTo: "एस्केलेट करें",
+        escalated: "एस्केलेटेड",
+        escalationHistory: "एस्केलेशन इतिहास",
+      },
+    },
+  },
+};
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false,
+    },
+    detection: {
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
+    },
+  });
+
+export default i18n;

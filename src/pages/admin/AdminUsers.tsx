@@ -100,7 +100,7 @@ export default function AdminUsers() {
           ] as const).map(t => (
             <button key={t.key} onClick={() => setTab(t.key)}
               className={cn("flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all",
-                tab === t.key ? "bg-white text-navy-800 shadow-sm" : "text-muted-foreground hover:text-foreground")}>
+                tab === t.key ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
               <t.icon className="w-4 h-4" /> {t.label}
             </button>
           ))}

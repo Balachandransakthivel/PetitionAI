@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Search, Filter, CheckCircle, Clock, AlertTriangle, BarChart3, Download, FileSpreadsheet } from "lucide-react";
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import { Search, Filter, CheckCircle, Clock, AlertTriangle, BarChart3, FileSpreadsheet, ArrowUpDown, Calendar } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useComplaints } from "@/hooks/useComplaints";
 import { Link } from "react-router-dom";
@@ -8,7 +10,18 @@ import { ComplaintStatus, Priority } from "@/types";
 import SLABadge from "@/components/features/SLABadge";
 import { exportComplaintsToExcel } from "@/lib/excelExport";
 
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } },
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+};
+
 export default function OfficerDashboard() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { complaints } = useComplaints();
   const [search, setSearch] = useState("");
@@ -20,133 +33,162 @@ export default function OfficerDashboard() {
     c.assignedOfficer === "o1"
   );
 
-  const filtered = deptComplaints.filter(c => {
+  const filtered = useMemo(() => deptComplaints.filter(c => {
     const matchStatus = statusFilter === "all" || c.status === statusFilter;
     const matchPriority = priorityFilter === "all" || c.priority === priorityFilter;
     const matchSearch = !search || c.title.toLowerCase().includes(search.toLowerCase()) || c.petitionId.toLowerCase().includes(search.toLowerCase());
     return matchStatus && matchPriority && matchSearch;
-  });
+  }), [deptComplaints, search, statusFilter, priorityFilter]);
 
   const pending = deptComplaints.filter(c => !["resolved", "closed"].includes(c.status));
   const resolved = deptComplaints.filter(c => ["resolved", "closed"].includes(c.status));
   const critical = deptComplaints.filter(c => c.priority === "critical");
   const overdue = deptComplaints.filter(c => {
-    const sla = getSLAStatusLocal(c);
-    return sla.isOverdue;
-  });
-
-  function getSLAStatusLocal(c: typeof deptComplaints[0]) {
     const SLA_DEADLINES: Record<string, number> = { critical: 24, high: 72, medium: 168, low: 336 };
     const deadlineMs = SLA_DEADLINES[c.priority] * 60 * 60 * 1000;
     const deadline = new Date(new Date(c.submittedAt).getTime() + deadlineMs);
     const remaining = deadline.getTime() - Date.now();
     const isResolved = c.status === "resolved" || c.status === "closed";
-    return { isOverdue: !isResolved && remaining < 0 };
-  }
+    return !isResolved && remaining < 0;
+  });
+
+  const stats = [
+    { label: "Assigned", value: deptComplaints.length, icon: BarChart3, gradient: "from-navy-600 to-navy-700" },
+    { label: "Pending", value: pending.length, icon: Clock, gradient: "from-amber-500 to-orange-500" },
+    { label: "Resolved", value: resolved.length, icon: CheckCircle, gradient: "from-emerald-500 to-green-500" },
+    { label: "Critical", value: critical.length, icon: AlertTriangle, gradient: "from-red-500 to-rose-500" },
+    { label: "Overdue", value: overdue.length, icon: AlertTriangle, gradient: "from-orange-500 to-red-500" },
+  ];
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="mb-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+        >
           <div>
-            <h1 className="font-serif text-2xl font-bold text-foreground">Officer Dashboard</h1>
+            <h1 className="font-display text-3xl font-extrabold text-foreground">Officer Dashboard</h1>
             <p className="text-muted-foreground text-sm mt-1">
               {user?.name} · {user?.department || "Roads & Infrastructure"} Department
             </p>
           </div>
           <button onClick={() => exportComplaintsToExcel(filtered)}
-            className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-2 rounded-md hover:bg-green-100 transition-colors font-medium">
-            <FileSpreadsheet className="w-3.5 h-3.5" /> Export to Excel
+            className="inline-flex items-center gap-2 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-2.5 rounded-full hover:bg-emerald-100 transition-all font-medium active:scale-[0.98]">
+            <FileSpreadsheet className="w-4 h-4" /> Export to Excel
           </button>
-        </div>
+        </motion.div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-7">
-          {[
-            { label: "Assigned", value: deptComplaints.length, icon: BarChart3, color: "text-navy-600 bg-navy-50" },
-            { label: "Pending Action", value: pending.length, icon: Clock, color: "text-amber-600 bg-amber-50" },
-            { label: "Resolved", value: resolved.length, icon: CheckCircle, color: "text-green-600 bg-green-50" },
-            { label: "Critical", value: critical.length, icon: AlertTriangle, color: "text-red-600 bg-red-50" },
-            { label: "Overdue (SLA)", value: overdue.length, icon: AlertTriangle, color: "text-orange-600 bg-orange-50" },
-          ].map(s => (
-            <div key={s.label} className="card-base p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-muted-foreground">{s.label}</p>
-                <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", s.color)}>
-                  <s.icon className="w-4 h-4" />
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-7"
+        >
+          {stats.map(s => (
+            <motion.div key={s.label} variants={fadeInUp} className="group">
+              <div className="card-doppelrand">
+                <div className="card-doppelrand-inner">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
+                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                      <s.icon className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-2xl font-display font-extrabold text-foreground">{s.value}</p>
                 </div>
               </div>
-              <p className="text-3xl font-bold text-foreground">{s.value}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Filters */}
-        <div className="card-base p-4 mb-5">
-          <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search complaints..."
-              className="w-full border border-border rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <div className="flex items-center gap-1.5">
-              <Filter className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground font-medium">Status:</span>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="card-doppelrand mb-6"
+        >
+          <div className="card-doppelrand-inner">
+            <div className="relative mb-4">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search complaints..."
+                className="w-full bg-muted/50 dark:bg-muted/20 border border-border rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:focus:ring-gold-400 text-foreground transition-all" />
             </div>
-            {(["all", "submitted", "under_review", "assigned", "in_progress"] as const).map(s => (
-              <button key={s} onClick={() => setStatusFilter(s)}
-                className={cn("text-xs px-2.5 py-1 rounded-full border transition-colors",
-                  statusFilter === s ? "bg-navy-800 text-white border-navy-800" : "bg-white text-muted-foreground border-border hover:border-navy-300")}>
-                {s === "all" ? "All" : statusLabel(s)}
-              </button>
-            ))}
-            <span className="mx-2 text-border">|</span>
-            <span className="text-xs text-muted-foreground font-medium self-center">Priority:</span>
-            {(["all", "critical", "high", "medium", "low"] as const).map(p => (
-              <button key={p} onClick={() => setPriorityFilter(p)}
-                className={cn("text-xs px-2.5 py-1 rounded-full border capitalize transition-colors",
-                  priorityFilter === p ? "bg-navy-800 text-white border-navy-800" : "bg-white text-muted-foreground border-border hover:border-navy-300")}>
-                {p}
-              </button>
-            ))}
+            <div className="flex flex-wrap gap-2 items-center">
+              <div className="flex items-center gap-1.5 mr-1">
+                <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+              </div>
+              {(["all", "submitted", "under_review", "assigned", "in_progress"] as const).map(s => (
+                <button key={s} onClick={() => setStatusFilter(s)}
+                  className={cn("text-xs px-3.5 py-1.5 rounded-full border font-medium transition-all duration-200",
+                    statusFilter === s ? "bg-navy-800 dark:bg-gold-500 text-white dark:text-navy-950 border-navy-800 dark:border-gold-500 shadow-sm" : "bg-card text-muted-foreground border-border hover:border-navy-300 dark:hover:border-gold-400/50 hover:text-foreground")}>
+                  {s === "all" ? "All" : statusLabel(s)}
+                </button>
+              ))}
+              <span className="mx-1 text-border">|</span>
+              {(["all", "critical", "high", "medium", "low"] as const).map(p => (
+                <button key={p} onClick={() => setPriorityFilter(p)}
+                  className={cn("text-xs px-3.5 py-1.5 rounded-full border font-medium capitalize transition-all duration-200",
+                    priorityFilter === p ? "bg-navy-800 dark:bg-gold-500 text-white dark:text-navy-950 border-navy-800 dark:border-gold-500 shadow-sm" : "bg-card text-muted-foreground border-border hover:border-navy-300 dark:hover:border-gold-400/50 hover:text-foreground")}>
+                  {p}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Complaints Table */}
-        <div className="card-base overflow-hidden">
-          <div className="bg-navy-800 text-white px-5 py-3 text-sm font-semibold flex items-center justify-between">
-            <span>Assigned Complaints ({filtered.length})</span>
-            <span className="text-navy-300 text-xs">Click a row to manage</span>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="card-doppelrand overflow-hidden"
+        >
+          <div className="card-doppelrand-inner !p-0 overflow-hidden">
+            <div className="bg-gradient-to-r from-navy-800 to-navy-900 text-white px-6 py-4 flex items-center justify-between">
+              <span className="font-display font-bold text-sm">Assigned Complaints ({filtered.length})</span>
+              <span className="text-navy-300 text-xs">Click a row to manage</span>
+            </div>
+            <div className="divide-y divide-border">
+              {filtered.length === 0 ? (
+                <div className="p-12 text-center text-muted-foreground">No complaints match your filters.</div>
+              ) : (
+                filtered.map((c, i) => (
+                  <motion.div
+                    key={c.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + i * 0.02 }}
+                  >
+                    <Link to={`/officer/petition/${c.id}`}
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-6 py-4 hover:bg-muted/50 transition-colors group">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="text-xs font-mono font-semibold text-navy-600 dark:text-gold-400">{c.petitionId}</span>
+                          {c.aiAnalysis.isDuplicate && <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">DUPLICATE</span>}
+                          {c.isEscalated && <span className="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold">ESCALATED</span>}
+                        </div>
+                        <p className="text-sm font-semibold text-foreground group-hover:text-navy-700 transition-colors">{c.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{c.submittedByName} · {c.location} · {formatDate(c.submittedAt)}</p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                        <SLABadge complaint={c} showDeadline={false} />
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-navy-50 text-navy-700 border border-navy-200/60">
+                          {Math.round(c.aiAnalysis.categoryConfidence * 100)}% AI
+                        </span>
+                        <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", priorityClass(c.priority))}>{c.priority.toUpperCase()}</span>
+                        <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", statusClass(c.status))}>{statusLabel(c.status)}</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))
+              )}
+            </div>
           </div>
-          <div className="divide-y divide-border">
-            {filtered.length === 0 ? (
-              <div className="p-12 text-center text-muted-foreground">No complaints match your filters.</div>
-            ) : (
-              filtered.map(c => (
-                <Link key={c.id} to={`/officer/petition/${c.id}`}
-                  className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-5 py-4 hover:bg-muted transition-colors group">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="text-xs font-mono font-semibold text-navy-600">{c.petitionId}</span>
-                      {c.aiAnalysis.isDuplicate && <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-semibold">DUPLICATE</span>}
-                      {c.isEscalated && <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-semibold">ESCALATED</span>}
-                    </div>
-                    <p className="text-sm font-semibold text-foreground group-hover:text-navy-700 transition-colors">{c.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{c.submittedByName} · {c.location} · {formatDate(c.submittedAt)}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                    <SLABadge complaint={c} showDeadline={false} />
-                    <span className="text-xs font-semibold px-2 py-1 rounded border bg-navy-50 text-navy-700 border-navy-200">
-                      {Math.round(c.aiAnalysis.categoryConfidence * 100)}% AI
-                    </span>
-                    <span className={cn("text-xs font-semibold px-2 py-1 rounded border", priorityClass(c.priority))}>{c.priority.toUpperCase()}</span>
-                    <span className={cn("text-xs font-semibold px-2 py-1 rounded border", statusClass(c.status))}>{statusLabel(c.status)}</span>
-                  </div>
-                </Link>
-              ))
-            )}
-          </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -135,7 +135,7 @@ export default function AdminComplaints() {
             <Filter className="w-3.5 h-3.5 text-muted-foreground" />
             {(["all", "submitted", "under_review", "assigned", "in_progress", "resolved", "closed"] as const).map(s => (
               <button key={s} onClick={() => setStatusFilter(s as ComplaintStatus | "all")}
-                className={cn("text-xs px-2.5 py-1 rounded-full border transition-colors", statusFilter === s ? "bg-navy-800 text-white border-navy-800" : "bg-white text-muted-foreground border-border hover:border-navy-300")}>
+                className={cn("text-xs px-2.5 py-1 rounded-full border transition-colors", statusFilter === s ? "bg-navy-800 dark:bg-gold-500 text-white dark:text-navy-950 border-navy-800 dark:border-gold-500" : "bg-card text-muted-foreground border-border hover:border-navy-300 hover:text-foreground")}>
                 {s === "all" ? "All Status" : statusLabel(s as ComplaintStatus)}
               </button>
             ))}
@@ -143,12 +143,12 @@ export default function AdminComplaints() {
           <div className="flex flex-wrap gap-2 items-center">
             {(["all", "critical", "high", "medium", "low"] as const).map(p => (
               <button key={p} onClick={() => setPriorityFilter(p as Priority | "all")}
-                className={cn("text-xs px-2.5 py-1 rounded-full border capitalize transition-colors", priorityFilter === p ? "bg-navy-800 text-white border-navy-800" : "bg-white text-muted-foreground border-border hover:border-navy-300")}>
+                className={cn("text-xs px-2.5 py-1 rounded-full border capitalize transition-colors", priorityFilter === p ? "bg-navy-800 dark:bg-gold-500 text-white dark:text-navy-950 border-navy-800 dark:border-gold-500" : "bg-card text-muted-foreground border-border hover:border-navy-300 hover:text-foreground")}>
                 {p === "all" ? "All Priority" : p}
               </button>
             ))}
             <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)}
-              className="text-xs border border-border rounded-full px-3 py-1 focus:outline-none focus:ring-1 focus:ring-navy-400 bg-white">
+              className="text-xs border border-border rounded-full px-3 py-1 focus:outline-none focus:ring-1 focus:ring-navy-400 bg-card text-foreground">
               <option value="all">All Departments</option>
               {DEPARTMENTS.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
             </select>

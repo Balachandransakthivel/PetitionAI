@@ -26,5 +26,5 @@ __pycache__/
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
+vite.config.ts.timestamp*
