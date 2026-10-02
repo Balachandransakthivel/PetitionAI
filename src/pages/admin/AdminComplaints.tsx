@@ -99,7 +99,7 @@ export default function AdminComplaints() {
           </div>
           <div className="flex gap-2">
             <button onClick={exportSelected}
-              className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-2 rounded-md hover:bg-green-100 transition-colors font-medium">
+              className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-2 rounded-md hover:bg-green-100 dark:bg-green-950/40 dark:text-green-300 dark:border-green-800/60 dark:hover:bg-green-900/40 transition-colors font-medium">
               <FileSpreadsheet className="w-3.5 h-3.5" /> {selectedIds.size > 0 ? `Export ${selectedIds.size} Selected` : "Export All"}
             </button>
           </div>
@@ -107,8 +107,8 @@ export default function AdminComplaints() {
 
         {/* Bulk Operations Bar */}
         {selectedIds.size > 0 && (
-          <div className="bg-navy-50 border border-navy-200 rounded-lg p-3 mb-4 flex items-center gap-3 flex-wrap">
-            <span className="text-sm font-semibold text-navy-800">{selectedIds.size} selected</span>
+          <div className="bg-navy-50 border border-navy-200 dark:bg-navy-900/60 dark:border-navy-700 rounded-lg p-3 mb-4 flex items-center gap-3 flex-wrap">
+            <span className="text-sm font-semibold text-navy-800 dark:text-navy-200">{selectedIds.size} selected</span>
             <select value={bulkStatus} onChange={e => setBulkStatus(e.target.value as ComplaintStatus)}
               className="text-xs border border-border rounded-md px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-navy-400">
               {(["under_review", "assigned", "in_progress", "resolved", "closed"] as const).map(s => (
@@ -189,12 +189,12 @@ export default function AdminComplaints() {
                         <td className="px-4 py-3">
                           <button onClick={() => toggleSelect(c.id)} className="flex items-center justify-center">
                             {selectedIds.has(c.id)
-                              ? <CheckSquare className="w-4 h-4 text-navy-600" />
+                              ? <CheckSquare className="w-4 h-4 text-navy-600 dark:text-navy-300" />
                               : <Square className="w-4 h-4 text-muted-foreground" />}
                           </button>
                         </td>
                         <td className="px-4 py-3">
-                          <Link to={`/admin/complaint/${c.id}`} className="font-mono text-xs text-navy-600 hover:text-navy-800 font-bold">{c.petitionId}</Link>
+                          <Link to={`/admin/complaint/${c.id}`} className="font-mono text-xs text-navy-600 hover:text-navy-800 dark:text-navy-300 dark:hover:text-navy-200 font-bold">{c.petitionId}</Link>
                         </td>
                         <td className="px-4 py-3 max-w-[200px]">
                           <p className="font-medium text-foreground truncate">{c.title}</p>
@@ -202,7 +202,7 @@ export default function AdminComplaints() {
                         </td>
                         <td className="px-4 py-3 text-xs text-muted-foreground">
                           <div>{c.category}</div>
-                          <div className="text-[10px] text-navy-500">{Math.round(c.aiAnalysis.categoryConfidence * 100)}% conf.</div>
+                          <div className="text-[10px] text-navy-500 dark:text-navy-300">{Math.round(c.aiAnalysis.categoryConfidence * 100)}% conf.</div>
                         </td>
                         <td className="px-4 py-3">
                           <span className={cn("text-xs font-semibold px-2 py-0.5 rounded border", priorityClass(c.priority))}>{c.priority.toUpperCase()}</span>
@@ -219,10 +219,10 @@ export default function AdminComplaints() {
                         <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(c.submittedAt)}</td>
                         <td className="px-4 py-3">
                           <div className="flex gap-1.5">
-                            <Link to={`/admin/complaint/${c.id}`} className="text-xs text-navy-600 border border-navy-300 px-2 py-1 rounded hover:bg-navy-50 transition-colors">View</Link>
+                            <Link to={`/admin/complaint/${c.id}`} className="text-xs text-navy-600 border border-navy-300 px-2 py-1 rounded hover:bg-navy-50 dark:text-navy-300 dark:border-navy-700 dark:hover:bg-gray-800 transition-colors">View</Link>
                             {!c.assignedOfficer && (
                               <button onClick={() => setAssigningId(assigningId === c.id ? null : c.id)}
-                                className="text-xs text-purple-600 border border-purple-300 px-2 py-1 rounded hover:bg-purple-50 transition-colors">
+                                className="text-xs text-purple-600 border border-purple-300 px-2 py-1 rounded hover:bg-purple-50 dark:text-purple-300 dark:border-purple-700 dark:hover:bg-gray-800 transition-colors">
                                 Assign
                               </button>
                             )}
@@ -230,7 +230,7 @@ export default function AdminComplaints() {
                         </td>
                       </tr>
                       {assigningId === c.id && (
-                        <tr className="bg-purple-50">
+                        <tr className="bg-purple-50 dark:bg-purple-950/30 dark:text-foreground">
                           <td colSpan={10} className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <select value={selectedOfficer} onChange={e => setSelectedOfficer(e.target.value)}

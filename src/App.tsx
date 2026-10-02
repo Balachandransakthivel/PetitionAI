@@ -57,7 +57,7 @@ function ProtectedRoute({ children, roles }: { children: React.ReactNode; roles:
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-12 h-12 border-4 border-navy-200 border-t-navy-700 rounded-full animate-spin" />
+            <div className="w-12 h-12 border-4 border-navy-200 border-t-navy-700 rounded-full animate-spin dark:border-navy-800 dark:border-t-navy-300" />
             <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-b-gold-400 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
           </div>
           <p className="text-sm text-muted-foreground font-medium">Loading...</p>
@@ -77,7 +77,7 @@ function AppRoutes() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
       <Navbar />
-      <AnimatePresence mode="sync">
+      <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
             user ? <Navigate to={`/${user.role}/dashboard`} replace /> : <AnimatedPage><LandingPage /></AnimatedPage>

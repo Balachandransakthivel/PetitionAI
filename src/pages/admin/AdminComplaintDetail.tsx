@@ -21,7 +21,7 @@ export default function AdminComplaintDetail() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl font-bold mb-2">Complaint Not Found</p>
-          <Link to="/admin/complaints" className="text-navy-600 hover:underline">Back</Link>
+          <Link to="/admin/complaints" className="text-navy-600 hover:underline dark:text-navy-300">Back</Link>
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ export default function AdminComplaintDetail() {
 
         <div className="card-base p-5 mb-5">
           <div className="flex flex-wrap gap-2 mb-3">
-            <span className="font-mono font-bold text-navy-700 bg-navy-50 px-2.5 py-1 rounded text-sm">{complaint.petitionId}</span>
+            <span className="font-mono font-bold text-navy-700 bg-navy-50 dark:bg-navy-900/60 dark:text-navy-200 px-2.5 py-1 rounded text-sm">{complaint.petitionId}</span>
             <span className={cn("text-xs font-semibold px-2 py-1 rounded border", statusClass(complaint.status))}>{statusLabel(complaint.status)}</span>
             <span className={cn("text-xs font-semibold px-2 py-1 rounded border", priorityClass(complaint.priority))}>{complaint.priority.toUpperCase()}</span>
           </div>

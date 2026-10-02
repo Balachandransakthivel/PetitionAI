@@ -39,7 +39,7 @@ export default function OfficerPetitionDetail() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl font-bold text-foreground mb-2">Complaint Not Found</p>
-          <Link to="/officer/dashboard" className="text-navy-600 hover:underline">Back to Dashboard</Link>
+          <Link to="/officer/dashboard" className="text-navy-600 dark:text-navy-300 hover:underline">Back to Dashboard</Link>
         </div>
       </div>
     );
@@ -99,17 +99,17 @@ export default function OfficerPetitionDetail() {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span className="font-mono font-bold text-navy-700 bg-navy-50 px-2.5 py-1 rounded text-sm">{complaint.petitionId}</span>
+                  <span className="font-mono font-bold text-navy-700 bg-navy-50 dark:bg-navy-900/60 dark:text-navy-200 px-2.5 py-1 rounded text-sm">{complaint.petitionId}</span>
                   <span className={cn("text-xs font-semibold px-2 py-1 rounded border", statusClass(complaint.status))}>{statusLabel(complaint.status)}</span>
                   <span className={cn("text-xs font-semibold px-2 py-1 rounded border", priorityClass(complaint.priority))}>{complaint.priority.toUpperCase()}</span>
-                  {complaint.isEscalated && <span className="text-xs bg-red-100 text-red-700 border border-red-200 px-2 py-1 rounded font-semibold flex items-center gap-1"><AlertTriangle className="w-3 h-3" />Escalated</span>}
+                  {complaint.isEscalated && <span className="text-xs bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300 border border-red-200 dark:border-red-800/60 px-2 py-1 rounded font-semibold flex items-center gap-1"><AlertTriangle className="w-3 h-3" />Escalated</span>}
                 </div>
                 <h1 className="font-serif text-xl font-bold text-foreground mb-2">{complaint.title}</h1>
                 <p className="text-sm text-muted-foreground">{complaint.description}</p>
               </div>
               <div className="flex gap-2 flex-shrink-0">
                 {!complaint.isEscalated && complaint.status !== "resolved" && (
-                  <button onClick={escalate} className="flex items-center gap-1.5 text-xs text-red-600 border border-red-300 px-3 py-2 rounded-md hover:bg-red-50 transition-colors">
+                  <button onClick={escalate} className="flex items-center gap-1.5 text-xs text-red-600 border border-red-300 dark:text-red-400 dark:border-red-800/60 dark:hover:bg-red-950/40 px-3 py-2 rounded-md hover:bg-red-50 transition-colors">
                     <AlertTriangle className="w-3.5 h-3.5" /> Escalate
                   </button>
                 )}
@@ -124,11 +124,11 @@ export default function OfficerPetitionDetail() {
             {/* Export Buttons */}
             <div className="flex flex-wrap gap-2 mt-3">
               <button onClick={() => generatePetitionPDF(complaint)}
-                className="inline-flex items-center gap-1.5 text-xs bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 rounded-md hover:bg-red-100 transition-colors">
+                className="inline-flex items-center gap-1.5 text-xs bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/60 px-3 py-1.5 rounded-md hover:bg-red-100 transition-colors">
                 <Download className="w-3.5 h-3.5" /> PDF
               </button>
               <button onClick={() => exportSingleComplaintToExcel(complaint)}
-                className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 rounded-md hover:bg-green-100 transition-colors">
+                className="inline-flex items-center gap-1.5 text-xs bg-green-50 text-green-700 border border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-800/60 px-3 py-1.5 rounded-md hover:bg-green-100 transition-colors">
                 <FileSpreadsheet className="w-3.5 h-3.5" /> Excel
               </button>
             </div>
@@ -177,7 +177,7 @@ export default function OfficerPetitionDetail() {
             </div>
             <div className="p-5 space-y-4">
               {saved && (
-                <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 px-3 py-2.5 rounded-md text-sm">
+                <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 dark:bg-green-950/40 dark:border-green-800/60 dark:text-green-300 px-3 py-2.5 rounded-md text-sm">
                   <CheckCircle className="w-4 h-4" /> Changes saved successfully.
                 </div>
               )}

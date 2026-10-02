@@ -70,15 +70,15 @@ export default function LoginPage() {
             <div className="card-doppelrand-inner">
               {resetSent ? (
                 <div className="text-center py-4">
-                  <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="w-8 h-8 text-emerald-500" />
+                  <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-4 dark:bg-emerald-950/40">
+                    <CheckCircle className="w-8 h-8 text-emerald-500 dark:text-emerald-300" />
                   </div>
                   <h3 className="text-lg font-display font-bold text-foreground mb-2">Check Your Email</h3>
                   <p className="text-sm text-muted-foreground mb-4">
                     We've sent a password reset link to <strong>{resetEmail}</strong>.
                   </p>
                   <button onClick={() => { setShowForgot(false); setResetSent(false); setResetEmail(""); }}
-                    className="text-sm text-navy-700 font-semibold hover:text-navy-900">
+                    className="text-sm text-navy-700 font-semibold hover:text-navy-900 dark:text-navy-300 dark:hover:text-navy-200">
                     Back to Sign In
                   </button>
                 </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <input type="email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} required
                         placeholder="Enter your registered email"
-                        className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-11 pr-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 focus:bg-white transition-all" />
+                        className="w-full bg-gray-50 border border-gray-200 rounded-2xl pl-11 pr-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 focus:bg-white transition-all dark:bg-gray-800/60 dark:border-gray-700 dark:focus:bg-gray-800 dark:text-foreground" />
                     </div>
                   </div>
                   <button type="submit" disabled={resetLoading}
@@ -113,8 +113,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-gold-400/5 rounded-full blur-3xl animate-glow-pulse" />
-        <div className="absolute bottom-1/4 -left-32 w-80 h-80 bg-navy-400/5 rounded-full blur-3xl animate-glow-pulse" style={{ animationDelay: "1.5s" }} />
+        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-gold-400/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -left-32 w-80 h-80 bg-navy-400/5 rounded-full blur-3xl" />
       </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -140,7 +140,7 @@ export default function LoginPage() {
                   <button
                     key={c.role}
                     onClick={() => fillDemo(c)}
-                    className="flex-1 text-xs border border-gray-200 rounded-xl py-2 font-medium hover:bg-navy-50 hover:border-navy-300 transition-all capitalize active:scale-[0.98]"
+                    className="flex-1 text-xs border border-gray-200 rounded-xl py-2 font-medium hover:bg-navy-50 hover:border-navy-300 transition-all capitalize active:scale-[0.98] dark:border-gray-700 dark:hover:bg-gray-800 dark:hover:border-gray-600"
                   >
                     {c.label}
                   </button>
@@ -153,7 +153,7 @@ export default function LoginPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl"
+                  className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl dark:bg-red-950/40 dark:border-red-800/60 dark:text-red-300"
                 >
                   {error}
                 </motion.div>
@@ -166,14 +166,14 @@ export default function LoginPage() {
                   onChange={e => setEmail(e.target.value)}
                   required
                   placeholder="Enter your email"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 focus:bg-white transition-all"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 focus:bg-white transition-all dark:bg-gray-800/60 dark:border-gray-700 dark:focus:bg-gray-800 dark:text-foreground"
                 />
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-sm font-medium text-foreground">Password</label>
                   <button type="button" onClick={() => setShowForgot(true)}
-                    className="text-xs text-navy-600 hover:text-navy-800 font-medium">
+                    className="text-xs text-navy-600 hover:text-navy-800 font-medium dark:text-navy-300 dark:hover:text-navy-200">
                     Forgot password?
                   </button>
                 </div>
@@ -184,7 +184,7 @@ export default function LoginPage() {
                     onChange={e => setPassword(e.target.value)}
                     required
                     placeholder="Enter your password"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 focus:bg-white transition-all"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 focus:bg-white transition-all dark:bg-gray-800/60 dark:border-gray-700 dark:focus:bg-gray-800 dark:text-foreground"
                   />
                   <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                     {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -202,7 +202,7 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-muted-foreground mt-6">
               No account?{" "}
-              <Link to="/register" className="text-navy-700 font-bold hover:text-navy-900 transition-colors">
+              <Link to="/register" className="text-navy-700 font-bold hover:text-navy-900 transition-colors dark:text-navy-300 dark:hover:text-navy-200">
                 Register as Citizen
               </Link>
             </p>

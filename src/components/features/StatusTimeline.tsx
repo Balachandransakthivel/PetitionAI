@@ -32,7 +32,7 @@ export default function StatusTimeline({ currentStatus, history }: Props) {
   return (
     <div className="card-base p-5">
       <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-        <Clock className="w-4 h-4 text-navy-600" />
+        <Clock className="w-4 h-4 text-navy-600 dark:text-navy-300" />
         Complaint Status Timeline
       </h3>
 
@@ -45,7 +45,7 @@ export default function StatusTimeline({ currentStatus, history }: Props) {
             <div key={s} className="flex flex-col items-center relative z-10" style={{ flex: 1 }}>
               <div className={cn(
                 "w-7 h-7 rounded-full flex items-center justify-center border-2 transition-all",
-                done ? `${STATUS_COLORS[s]} border-transparent` : "bg-white border-border",
+                done ? `${STATUS_COLORS[s]} border-transparent` : "bg-card border-border",
                 active ? "ring-2 ring-offset-2 ring-navy-400" : ""
               )}>
                 {done
@@ -55,7 +55,7 @@ export default function StatusTimeline({ currentStatus, history }: Props) {
               </div>
               <p className={cn(
                 "text-[9px] mt-1.5 font-medium text-center leading-tight",
-                done ? "text-navy-700" : "text-muted-foreground"
+                done ? "text-navy-700 dark:text-navy-300" : "text-muted-foreground dark:text-muted-foreground"
               )}>
                 {statusLabel(s).replace(" ", "\n")}
               </p>

@@ -21,8 +21,8 @@ export default function EscalationBadge({ complaint, onEscalate }: EscalationBad
     <div className={cn(
       "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border",
       complaint.isEscalated
-        ? "bg-red-50 text-red-700 border-red-200"
-        : "bg-orange-50 text-orange-700 border-orange-200"
+        ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/60"
+        : "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800/60"
     )}>
       {complaint.isEscalated ? (
         <>
@@ -49,7 +49,7 @@ export function EscalationTimeline({ complaintId }: { complaintId: string }) {
   return (
     <div className="mt-4">
       <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-        <Clock className="w-4 h-4 text-navy-600" />
+        <Clock className="w-4 h-4 text-navy-600 dark:text-navy-300" />
         {t("escalation.escalationHistory")}
       </h4>
       <div className="space-y-2">
@@ -60,7 +60,7 @@ export function EscalationTimeline({ complaintId }: { complaintId: string }) {
               <p className="text-foreground">
                 <span className="font-medium">{log.fromPriority}</span>
                 {" → "}
-                <span className="font-medium text-red-600">{log.toPriority}</span>
+                <span className="font-medium text-red-600 dark:text-red-400">{log.toPriority}</span>
               </p>
               <p className="text-muted-foreground text-xs">{log.reason}</p>
               <p className="text-muted-foreground text-xs">

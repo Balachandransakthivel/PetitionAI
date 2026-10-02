@@ -31,16 +31,16 @@ export default function CitizenProfile() {
                 </div>
                 <div>
                   <h2 className="font-bold text-foreground text-lg">{user?.name}</h2>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold uppercase">Citizen</span>
+                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold uppercase dark:bg-blue-950/40 dark:text-blue-300">Citizen</span>
                 </div>
               </div>
               {!editing ? (
-                <button onClick={() => setEditing(true)} className="flex items-center gap-1.5 text-sm text-navy-600 border border-navy-300 px-3 py-1.5 rounded-md hover:bg-navy-50 transition-colors">
+                <button onClick={() => setEditing(true)} className="flex items-center gap-1.5 text-sm text-navy-600 border border-navy-300 px-3 py-1.5 rounded-md hover:bg-navy-50 transition-colors dark:text-navy-300 dark:border-navy-700 dark:hover:bg-gray-800">
                   <Edit3 className="w-3.5 h-3.5" /> Edit
                 </button>
               ) : (
                 <div className="flex gap-2">
-                  <button onClick={() => setEditing(false)} className="flex items-center gap-1 text-sm text-green-600 border border-green-300 px-3 py-1.5 rounded-md hover:bg-green-50">
+                  <button onClick={() => setEditing(false)} className="flex items-center gap-1 text-sm text-green-600 border border-green-300 px-3 py-1.5 rounded-md hover:bg-green-50 dark:text-green-400 dark:border-green-800/60 dark:hover:bg-green-950/40">
                     <Save className="w-3.5 h-3.5" /> Save
                   </button>
                   <button onClick={() => setEditing(false)} className="flex items-center gap-1 text-sm text-muted-foreground border border-border px-2 py-1.5 rounded-md hover:bg-muted">
@@ -75,7 +75,7 @@ export default function CitizenProfile() {
               <h3 className="font-semibold text-foreground text-sm mb-3">Petition Summary</h3>
               <div className="space-y-3">
                 {[
-                  { label: "Total Filed", value: complaints.length, color: "text-navy-700" },
+                  { label: "Total Filed", value: complaints.length, color: "text-navy-700 dark:text-navy-300" },
                   { label: "Resolved", value: resolved, color: "text-green-600" },
                   { label: "Pending", value: complaints.length - resolved, color: "text-amber-600" },
                 ].map(s => (

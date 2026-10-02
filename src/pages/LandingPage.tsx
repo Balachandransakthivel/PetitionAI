@@ -10,21 +10,21 @@ import {
 import heroBanner from "@/assets/hero-banner.jpg";
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.4 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.04, delayChildren: 0 },
   },
 };
 
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
 };
 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -91,7 +91,7 @@ export default function LandingPage() {
         <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-28 w-full">
           <div className="max-w-3xl">
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
             >
@@ -102,7 +102,7 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6"
@@ -111,7 +111,7 @@ export default function LandingPage() {
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
               className="text-navy-100 text-base lg:text-lg leading-relaxed mb-8 max-w-2xl"
@@ -120,14 +120,14 @@ export default function LandingPage() {
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3 }}
               className="flex flex-wrap gap-4"
             >
               <Link to="/register" className="group bg-gold-400 hover:bg-gold-300 text-navy-900 font-bold px-7 py-3.5 rounded-full transition-all duration-200 hover:shadow-xl hover:shadow-gold-400/20 flex items-center gap-3 text-base active:scale-[0.98]">
                 {t("landing.cta")}
-                <span className="w-7 h-7 rounded-full bg-navy-900/10 flex items-center justify-center group-hover:translate-x-1 transition-transform duration-200">
+                <span className="w-7 h-7 rounded-full bg-navy-900/10 flex items-center justify-center transition-transform duration-200">
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
@@ -139,7 +139,7 @@ export default function LandingPage() {
 
             {/* Stats */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-white/10"
@@ -184,7 +184,7 @@ export default function LandingPage() {
               >
                 <div className="card-doppelrand h-full">
                   <div className="card-doppelrand-inner h-full flex flex-col">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 shadow-md transition-transform duration-200`}>
                       <f.icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="font-display font-bold text-lg text-foreground mb-2 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition-colors">
@@ -224,7 +224,7 @@ export default function LandingPage() {
                 className="relative group"
               >
                 <div className="bg-white/5 dark:bg-card/40 backdrop-blur-sm border border-white/10 dark:border-border/40 rounded-3xl p-6 hover:bg-white/10 dark:hover:bg-card/60 transition-all duration-200">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center mb-4 shadow-md shadow-gold-400/20 group-hover:scale-105 transition-transform duration-200">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center mb-4 shadow-md shadow-gold-400/20 transition-transform duration-200">
                     <s.icon className="w-6 h-6 text-navy-900" />
                   </div>
                   <div className="text-xs font-bold text-gold-400/80 mb-2 tracking-widest">{s.n}</div>
@@ -269,7 +269,7 @@ export default function LandingPage() {
                 <div className="card-doppelrand h-full">
                   <div className="card-doppelrand-inner text-center h-full flex flex-col justify-between">
                     <div>
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${d.gradient} flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${d.gradient} flex items-center justify-center mx-auto mb-4 shadow-md transition-transform duration-200`}>
                         <d.icon className="w-7 h-7 text-white" />
                       </div>
                       <h3 className="font-display font-bold text-xl text-foreground mb-3">{d.role}</h3>
@@ -287,7 +287,7 @@ export default function LandingPage() {
                       className="inline-flex items-center justify-center gap-2 text-sm font-bold text-navy-700 dark:text-gold-400 hover:text-navy-900 dark:hover:text-gold-300 transition-colors group/link"
                     >
                       Login as {d.role}
-                      <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 transition-transform" />
                     </Link>
                   </div>
                 </div>
@@ -324,7 +324,7 @@ export default function LandingPage() {
               >
                 <div className="card-doppelrand h-full">
                   <div className="card-doppelrand-inner h-full">
-                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${r.color} flex items-center justify-center mb-5 shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${r.color} flex items-center justify-center mb-5 shadow-md transition-transform duration-200`}>
                       <r.icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="font-display font-bold text-xl text-foreground mb-4">{r.role}</h3>

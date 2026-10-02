@@ -27,10 +27,10 @@ export default function PetitionDetail() {
 
   if (!complaint) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-background dark:to-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-2xl font-display font-bold text-foreground mb-2">Petition Not Found</p>
-          <Link to="/citizen/petitions" className="text-navy-600 hover:underline font-medium">Back to My Petitions</Link>
+          <Link to="/citizen/petitions" className="text-navy-600 dark:text-navy-300 hover:underline font-medium">Back to My Petitions</Link>
         </div>
       </div>
     );
@@ -57,11 +57,11 @@ export default function PetitionDetail() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-background dark:to-background py-8 px-4">
         <div className="max-w-4xl mx-auto">
           {/* Back */}
           <motion.div
-            initial={{ opacity: 0, x: -12 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, x: 0 }}
           >
             <Link to="/citizen/petitions" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors font-medium">
@@ -71,7 +71,7 @@ export default function PetitionDetail() {
 
           {/* Header Card */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="card-doppelrand mb-6"
@@ -80,7 +80,7 @@ export default function PetitionDetail() {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className="text-sm font-mono font-bold text-navy-700 bg-navy-50 px-3 py-1 rounded-lg">{complaint.petitionId}</span>
+                    <span className="text-sm font-mono font-bold text-navy-700 bg-navy-50 dark:bg-navy-900/60 dark:text-navy-200 px-3 py-1 rounded-lg">{complaint.petitionId}</span>
                     <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", statusClass(complaint.status))}>{statusLabel(complaint.status)}</span>
                     <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", priorityClass(complaint.priority))}>{complaint.priority.toUpperCase()} PRIORITY</span>
                     <EscalationBadge complaint={complaint} />
@@ -98,13 +98,13 @@ export default function PetitionDetail() {
               <div className="flex flex-wrap gap-2 mb-4">
                 <button
                   onClick={() => generatePetitionPDF(complaint)}
-                  className="inline-flex items-center gap-1.5 text-xs bg-red-50 text-red-700 border border-red-200/60 px-3.5 py-2 rounded-full hover:bg-red-100 transition-all font-medium active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 text-xs bg-red-50 text-red-700 border border-red-200/60 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/60 px-3.5 py-2 rounded-full hover:bg-red-100 transition-all font-medium active:scale-[0.98]"
                 >
                   <Download className="w-3.5 h-3.5" /> Download PDF
                 </button>
                 <button
                   onClick={() => exportSingleComplaintToExcel(complaint)}
-                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200/60 px-3.5 py-2 rounded-full hover:bg-emerald-100 transition-all font-medium active:scale-[0.98]"
+                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60 px-3.5 py-2 rounded-full hover:bg-emerald-100 transition-all font-medium active:scale-[0.98]"
                 >
                   <FileSpreadsheet className="w-3.5 h-3.5" /> Export Excel
                 </button>
@@ -133,7 +133,7 @@ export default function PetitionDetail() {
 
           {/* QR Code */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="card-doppelrand mb-6"
@@ -150,7 +150,7 @@ export default function PetitionDetail() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Status Timeline */}
             <motion.div
-              initial={{ opacity: 0, x: -12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
@@ -159,7 +159,7 @@ export default function PetitionDetail() {
 
             {/* AI Analysis */}
             <motion.div
-              initial={{ opacity: 0, x: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
@@ -170,9 +170,9 @@ export default function PetitionDetail() {
           {/* Officer Remarks */}
           {complaint.officerRemarks && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.3 }}
               className="card-doppelrand mb-6"
             >
               <div className="card-doppelrand-inner">
@@ -188,9 +188,9 @@ export default function PetitionDetail() {
           {/* Resolution Details */}
           {complaint.resolutionDetails && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 }}
+              transition={{ delay: 0.3 }}
               className="card-doppelrand mb-6 border-l-4 border-emerald-400"
             >
               <div className="card-doppelrand-inner">
@@ -205,9 +205,9 @@ export default function PetitionDetail() {
 
           {/* Full AI Analysis */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.3 }}
             className="mb-6"
           >
             <AIAnalysisCard analysis={complaint.aiAnalysis} />
@@ -215,9 +215,9 @@ export default function PetitionDetail() {
 
           {/* Escalation Timeline */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55 }}
+            transition={{ delay: 0.3 }}
             className="card-doppelrand mb-6"
           >
             <div className="card-doppelrand-inner">
@@ -227,9 +227,9 @@ export default function PetitionDetail() {
 
           {/* Comments */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.3 }}
             className="card-doppelrand mb-6"
           >
             <div className="card-doppelrand-inner">
@@ -240,9 +240,9 @@ export default function PetitionDetail() {
           {/* Feedback */}
           {complaint.status === "resolved" && !complaint.feedback && !feedbackSubmitted && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.65 }}
+              transition={{ delay: 0.3 }}
               className="card-doppelrand mb-6"
             >
               <div className="card-doppelrand-inner">
@@ -254,7 +254,7 @@ export default function PetitionDetail() {
                       whileHover={{ scale: 1.15 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => setRating(s)}
-                      className={cn("w-10 h-10 rounded-full transition-all", rating >= s ? "text-gold-400" : "text-muted-foreground hover:text-gold-300")}
+                      className={cn("w-10 h-10 rounded-full", rating >= s ? "text-gold-400" : "text-muted-foreground hover:text-gold-300")}
                     >
                       <Star className="w-7 h-7 fill-current" />
                     </motion.button>
@@ -270,12 +270,12 @@ export default function PetitionDetail() {
 
           {(complaint.feedback || feedbackSubmitted) && (
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              className="card-doppelrand mb-6 bg-emerald-50 border-emerald-200"
+              className="card-doppelrand mb-6 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800/60"
             >
               <div className="card-doppelrand-inner">
-                <p className="text-sm font-display font-bold text-emerald-700">Feedback submitted. Thank you!</p>
+                <p className="text-sm font-display font-bold text-emerald-700 dark:text-emerald-400">Feedback submitted. Thank you!</p>
                 {complaint.feedback && (
                   <div className="flex gap-1 mt-2">
                     {[1, 2, 3, 4, 5].map(s => <Star key={s} className={cn("w-4 h-4", s <= complaint.feedback!.rating ? "text-gold-400 fill-gold-400" : "text-muted-foreground")} />)}
@@ -290,10 +290,8 @@ export default function PetitionDetail() {
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
               onClick={reopenComplaint}
-              className="flex items-center gap-2 text-sm text-amber-600 hover:text-amber-800 border border-amber-300 px-5 py-3 rounded-full hover:bg-amber-50 transition-all font-medium"
+              className="flex items-center gap-2 text-sm text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 border border-amber-300 dark:border-amber-800/60 px-5 py-3 rounded-full hover:bg-amber-50 dark:hover:bg-amber-950/40 font-medium"
             >
               <RotateCcw className="w-4 h-4" /> Reopen — Issue Not Resolved
             </motion.button>

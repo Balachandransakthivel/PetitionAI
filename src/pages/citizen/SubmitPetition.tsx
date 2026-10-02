@@ -210,15 +210,15 @@ export default function SubmitPetition() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="card-base p-10 text-center max-w-md w-full">
-          <div className="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Brain className="w-8 h-8 text-navy-700 animate-pulse" />
+          <div className="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-navy-900/60">
+            <Brain className="w-8 h-8 text-navy-700 animate-pulse dark:text-navy-200" />
           </div>
           <h2 className="font-serif text-xl font-bold text-foreground mb-2">AI is Analysing Your Petition</h2>
           <p className="text-muted-foreground text-sm mb-6">Classifying complaint, detecting duplicates, predicting priority and routing to department...</p>
           <div className="space-y-2.5">
             {["Preprocessing complaint text...", "Running NLP classification...", "Checking semantic similarity...", "Predicting priority & sentiment...", "Routing to department..."].map((msg, i) => (
               <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Loader2 className="w-3 h-3 animate-spin text-navy-500 flex-shrink-0" />
+                <Loader2 className="w-3 h-3 animate-spin text-navy-500 flex-shrink-0 dark:text-navy-300" />
                 {msg}
               </div>
             ))}
@@ -238,7 +238,7 @@ export default function SubmitPetition() {
               <div>
                 <p className="font-bold text-foreground">Petition Submitted Successfully!</p>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  Petition ID: <span className="font-mono font-bold text-navy-700">{submittedComplaint.petitionId}</span> · Use this ID to track your complaint.
+                  Petition ID: <span className="font-mono font-bold text-navy-700 dark:text-navy-300">{submittedComplaint.petitionId}</span> · Use this ID to track your complaint.
                 </p>
               </div>
             </div>
@@ -247,13 +247,13 @@ export default function SubmitPetition() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
             <div className="card-base p-4">
               <h3 className="font-semibold text-foreground text-sm mb-3 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-navy-600" /> Petition Details
+                <FileText className="w-4 h-4 text-navy-600 dark:text-navy-300" /> Petition Details
               </h3>
               <div className="space-y-2">
                 <p className="text-sm"><span className="text-muted-foreground">Title:</span> <span className="font-medium">{submittedComplaint.title}</span></p>
                 <p className="text-sm"><span className="text-muted-foreground">Category:</span> <span className="font-medium">{submittedComplaint.category}</span></p>
                 <p className="text-sm"><span className="text-muted-foreground">Location:</span> <span className="font-medium">{submittedComplaint.location}</span></p>
-                <p className="text-sm"><span className="text-muted-foreground">Department:</span> <span className="font-semibold text-navy-700">{submittedComplaint.assignedDepartment}</span></p>
+                <p className="text-sm"><span className="text-muted-foreground">Department:</span> <span className="font-semibold text-navy-700 dark:text-navy-300">{submittedComplaint.assignedDepartment}</span></p>
                 <p className="text-sm"><span className="text-muted-foreground">Status:</span> <span className="font-semibold text-blue-600">Under Review</span></p>
               </div>
             </div>
@@ -283,9 +283,9 @@ export default function SubmitPetition() {
           <p className="text-muted-foreground text-sm mt-1">Your complaint will be automatically classified and routed by our AI engine.</p>
         </div>
 
-        <div className="card-base p-3 mb-6 flex items-start gap-2 bg-navy-50 border-navy-200">
-          <Brain className="w-4 h-4 text-navy-600 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-navy-700 leading-relaxed">
+        <div className="card-base p-3 mb-6 flex items-start gap-2 bg-navy-50 border-navy-200 dark:bg-navy-900/50 dark:border-navy-700">
+          <Brain className="w-4 h-4 text-navy-600 flex-shrink-0 mt-0.5 dark:text-navy-300" />
+          <p className="text-xs text-navy-700 leading-relaxed dark:text-navy-200">
             Our AI will automatically: classify your complaint, detect duplicates, assign priority, analyse sentiment, and route to the correct department.
           </p>
         </div>
@@ -371,7 +371,7 @@ export default function SubmitPetition() {
           <div
             className={`border-2 rounded-md p-6 transition-colors ${
               dragActive
-                ? "border-navy-400 bg-navy-50"
+                ? "border-navy-400 bg-navy-50 dark:border-navy-500 dark:bg-navy-900/40"
                 : "border-dashed border-border"
             }`}
             onDragEnter={handleDrag}
@@ -389,7 +389,7 @@ export default function SubmitPetition() {
                 <button
                   type="button"
                   onClick={handleBrowseClick}
-                  className="mt-3 text-xs text-navy-600 border border-navy-300 px-3 py-1.5 rounded-md hover:bg-navy-50 transition-colors"
+                  className="mt-3 text-xs text-navy-600 border border-navy-300 px-3 py-1.5 rounded-md hover:bg-navy-50 transition-colors dark:text-navy-300 dark:border-navy-700 dark:hover:bg-gray-800"
                 >
                   Browse Files
                 </button>
@@ -404,7 +404,7 @@ export default function SubmitPetition() {
                     <button
                       type="button"
                       onClick={clearFiles}
-                      className="text-xs text-red-600 hover:underline"
+                      className="text-xs text-red-600 hover:underline dark:text-red-400"
                     >
                       Clear all
                     </button>
@@ -448,7 +448,7 @@ export default function SubmitPetition() {
                     <button
                       type="button"
                       onClick={handleBrowseClick}
-                      className="border-2 border-dashed border-border rounded-md p-3 flex flex-col items-center justify-center text-center hover:border-navy-400 hover:bg-navy-50 transition-colors"
+                      className="border-2 border-dashed border-border rounded-md p-3 flex flex-col items-center justify-center text-center hover:border-navy-400 hover:bg-navy-50 transition-colors dark:hover:border-navy-500 dark:hover:bg-gray-800"
                     >
                       <Upload className="w-5 h-5 text-muted-foreground mb-1" />
                       <span className="text-xs text-muted-foreground">Add more</span>
@@ -457,7 +457,7 @@ export default function SubmitPetition() {
                 </div>
 
                 {fileError && (
-                  <p className="text-xs text-red-600 flex items-center gap-1">
+                  <p className="text-xs text-red-600 flex items-center gap-1 dark:text-red-400">
                     <AlertTriangle className="w-3 h-3" />
                     {fileError}
                   </p>
@@ -466,9 +466,9 @@ export default function SubmitPetition() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
-            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-            <p className="text-xs text-amber-700">Submitting false complaints may result in account suspension. Please ensure accuracy.</p>
+          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md dark:bg-amber-950/40 dark:border-amber-800/60">
+            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 dark:text-amber-300" />
+            <p className="text-xs text-amber-700 dark:text-amber-300">Submitting false complaints may result in account suspension. Please ensure accuracy.</p>
           </div>
 
           <button type="submit" className="w-full bg-navy-800 hover:bg-navy-700 text-white font-semibold py-3 rounded-md transition-colors flex items-center justify-center gap-2">

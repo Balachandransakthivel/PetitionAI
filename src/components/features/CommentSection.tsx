@@ -10,9 +10,9 @@ interface CommentSectionProps {
 }
 
 const ROLE_COLORS = {
-  citizen: "bg-blue-100 text-blue-700 border-blue-200",
-  officer: "bg-purple-100 text-purple-700 border-purple-200",
-  admin: "bg-amber-100 text-amber-700 border-amber-200",
+  citizen: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60",
+  officer: "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/60",
+  admin: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60",
 };
 
 export default function CommentSection({ petitionId }: CommentSectionProps) {
@@ -31,7 +31,7 @@ export default function CommentSection({ petitionId }: CommentSectionProps) {
   return (
     <div className="mt-6">
       <div className="flex items-center gap-2 mb-4">
-        <MessageCircle className="w-5 h-5 text-navy-600" />
+        <MessageCircle className="w-5 h-5 text-navy-600 dark:text-navy-300" />
         <h3 className="font-semibold text-foreground">{t("common.comments")} ({comments.length})</h3>
       </div>
 
@@ -45,12 +45,12 @@ export default function CommentSection({ petitionId }: CommentSectionProps) {
             key={comment.id}
             className={cn(
               "border rounded-lg p-3 transition-all",
-              comment.isInternal ? "bg-amber-50 border-amber-200" : "bg-white border-border"
+              comment.isInternal ? "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800/60" : "bg-white border-border dark:bg-muted dark:border-border"
             )}
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 text-[10px] font-bold">
+                <div className="w-6 h-6 rounded-full bg-navy-100 flex items-center justify-center text-navy-700 text-[10px] font-bold dark:bg-navy-800 dark:text-navy-200">
                   {comment.userName.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-sm font-medium text-foreground">{comment.userName}</span>
@@ -58,7 +58,7 @@ export default function CommentSection({ petitionId }: CommentSectionProps) {
                   {comment.userRole}
                 </span>
                 {comment.isInternal && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-100 text-amber-700 border border-amber-200">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-amber-100 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800/60">
                     Internal
                   </span>
                 )}

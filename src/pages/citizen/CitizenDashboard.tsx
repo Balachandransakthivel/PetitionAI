@@ -9,13 +9,13 @@ import ComplaintCard from "@/components/features/ComplaintCard";
 import { cn } from "@/lib/utils";
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0 } },
 };
 
 export default function CitizenDashboard() {
@@ -44,8 +44,8 @@ export default function CitizenDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div>
@@ -72,7 +72,7 @@ export default function CitizenDashboard() {
                 <div className="card-doppelrand-inner">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-sm font-medium text-muted-foreground">{s.label}</p>
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-200`}>
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-md transition-transform duration-200`}>
                       <s.icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
@@ -86,9 +86,9 @@ export default function CitizenDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Petitions */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
             className="lg:col-span-2 space-y-4"
           >
             <div className="flex items-center justify-between">
@@ -114,9 +114,9 @@ export default function CitizenDashboard() {
               recentComplaints.map((c, i) => (
                 <motion.div
                   key={c.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.05 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: i * 0.03 }}
                 >
                   <ComplaintCard complaint={c} linkTo={`/citizen/petition/${c.id}`} />
                 </motion.div>
@@ -126,9 +126,9 @@ export default function CitizenDashboard() {
 
           {/* Sidebar */}
           <motion.div
-            initial={{ opacity: 0, x: 15 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.25 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
             className="space-y-5"
           >
             {/* Quick Actions */}

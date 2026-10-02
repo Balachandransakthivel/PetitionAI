@@ -16,10 +16,10 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
   };
 
   const priorityColors: Record<string, string> = {
-    critical: "text-red-700 bg-red-50 border-red-200",
-    high: "text-orange-700 bg-orange-50 border-orange-200",
-    medium: "text-yellow-700 bg-yellow-50 border-yellow-200",
-    low: "text-green-700 bg-green-50 border-green-200",
+    critical: "text-red-700 bg-red-50 border-red-200 dark:text-red-300 dark:bg-red-950/40 dark:border-red-800/60",
+    high: "text-orange-700 bg-orange-50 border-orange-200 dark:text-orange-300 dark:bg-orange-950/40 dark:border-orange-800/60",
+    medium: "text-yellow-700 bg-yellow-50 border-yellow-200 dark:text-yellow-300 dark:bg-yellow-950/40 dark:border-yellow-800/60",
+    low: "text-green-700 bg-green-50 border-green-200 dark:text-green-300 dark:bg-green-950/40 dark:border-green-800/60",
   };
 
   return (
@@ -34,9 +34,9 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
       <div className="p-4 space-y-4">
         {/* Summary */}
         {!compact && (
-          <div className="bg-navy-50 border border-navy-200 rounded-md px-3 py-2.5 flex items-start gap-2">
-            <Lightbulb className="w-4 h-4 text-navy-600 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-navy-800 leading-relaxed">{analysis.summaryNote}</p>
+          <div className="bg-navy-50 border border-navy-200 rounded-md px-3 py-2.5 flex items-start gap-2 dark:bg-navy-900/50 dark:border-navy-700">
+            <Lightbulb className="w-4 h-4 text-navy-600 dark:text-navy-300 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-navy-800 leading-relaxed dark:text-navy-200">{analysis.summaryNote}</p>
           </div>
         )}
 
@@ -44,7 +44,7 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-muted rounded-md p-3">
             <div className="flex items-center gap-1.5 mb-2">
-              <Tag className="w-3.5 h-3.5 text-navy-600" />
+              <Tag className="w-3.5 h-3.5 text-navy-600 dark:text-navy-300" />
               <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Category</span>
             </div>
             <p className="text-sm font-semibold text-foreground">{analysis.category}</p>
@@ -52,7 +52,7 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
           </div>
           <div className="bg-muted rounded-md p-3">
             <div className="flex items-center gap-1.5 mb-2">
-              <Building2 className="w-3.5 h-3.5 text-navy-600" />
+              <Building2 className="w-3.5 h-3.5 text-navy-600 dark:text-navy-300" />
               <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Department</span>
             </div>
             <p className="text-sm font-semibold text-foreground">{analysis.department}</p>
@@ -91,14 +91,14 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
         </div>
 
         {/* Duplicate Detection */}
-        <div className={cn("rounded-md p-3 border flex items-start gap-2", analysis.isDuplicate ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200")}>
-          <Copy className={cn("w-4 h-4 flex-shrink-0 mt-0.5", analysis.isDuplicate ? "text-amber-600" : "text-green-600")} />
+        <div className={cn("rounded-md p-3 border flex items-start gap-2", analysis.isDuplicate ? "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800/60" : "bg-green-50 border-green-200 dark:bg-green-950/40 dark:border-green-800/60")}>
+          <Copy className={cn("w-4 h-4 flex-shrink-0 mt-0.5", analysis.isDuplicate ? "text-amber-600 dark:text-amber-300" : "text-green-600 dark:text-green-300")} />
           <div>
-            <p className={cn("text-xs font-semibold", analysis.isDuplicate ? "text-amber-700" : "text-green-700")}>
+            <p className={cn("text-xs font-semibold", analysis.isDuplicate ? "text-amber-700 dark:text-amber-300" : "text-green-700 dark:text-green-300")}>
               {analysis.isDuplicate ? `⚠️ Possible Duplicate Detected` : "✓ No Duplicates Found"}
             </p>
             {analysis.isDuplicate && (
-              <p className="text-[11px] text-amber-600 mt-0.5">{analysis.duplicateCount} similar complaint(s) already on record.</p>
+              <p className="text-[11px] text-amber-600 dark:text-amber-300 mt-0.5">{analysis.duplicateCount} similar complaint(s) already on record.</p>
             )}
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
                     <p className="text-[10px] text-muted-foreground">{sc.id}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-xs font-bold text-navy-700">{Math.round(sc.similarity * 100)}%</p>
+                    <p className="text-xs font-bold text-navy-700 dark:text-navy-300">{Math.round(sc.similarity * 100)}%</p>
                     <p className="text-[10px] text-muted-foreground">similarity</p>
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
             <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Extracted Keywords</p>
             <div className="flex flex-wrap gap-1.5">
               {analysis.keywords.map((kw, i) => (
-                <span key={i} className="text-[11px] bg-navy-100 text-navy-700 px-2 py-0.5 rounded-full">{kw}</span>
+                <span key={i} className="text-[11px] bg-navy-100 text-navy-700 dark:bg-navy-800 dark:text-navy-200 px-2 py-0.5 rounded-full">{kw}</span>
               ))}
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function AIAnalysisCard({ analysis, compact = false }: Props) {
 function ConfidenceBar({ score }: { score: number }) {
   return (
     <div className="mt-2">
-      <div className="bg-white/60 rounded-full h-1.5">
+      <div className="bg-white/60 dark:bg-white/10 rounded-full h-1.5">
         <div className={cn("h-1.5 rounded-full transition-all", confidenceBar(score))} style={{ width: `${score * 100}%` }} />
       </div>
       <p className="text-[10px] text-muted-foreground mt-0.5">{Math.round(score * 100)}% confidence</p>

@@ -87,11 +87,11 @@ export default function AIChatbot() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-navy-800 hover:bg-navy-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-navy-800 hover:bg-navy-700 text-white rounded-full shadow-xl flex items-center justify-center transition-all z-50"
           aria-label="Open AI Chatbot"
         >
           <MessageCircle className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse-soft" />
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white" />
         </button>
       )}
 
@@ -151,7 +151,7 @@ export default function AIChatbot() {
                     </div>
                     <div className="bg-muted rounded-2xl px-3 py-2 flex gap-1">
                       {[0, 1, 2].map(i => (
-                        <div key={i} className="w-1.5 h-1.5 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                        <div key={i} className="w-1.5 h-1.5 bg-muted-foreground rounded-full" />
                       ))}
                     </div>
                   </div>

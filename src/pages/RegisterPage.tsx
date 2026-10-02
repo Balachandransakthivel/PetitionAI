@@ -53,7 +53,7 @@ export default function RegisterPage() {
         <div className="card-base p-6 shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2.5 rounded-md">{error}</div>
+              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2.5 rounded-md dark:bg-red-950/40 dark:border-red-800/60 dark:text-red-300">{error}</div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -102,7 +102,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-muted-foreground mt-5">
             Already have an account?{" "}
-            <Link to="/login" className="text-navy-700 font-semibold hover:text-navy-900">Sign In</Link>
+            <Link to="/login" className="text-navy-700 font-semibold hover:text-navy-900 dark:text-navy-300 dark:hover:text-navy-200">Sign In</Link>
           </p>
         </div>
       </div>

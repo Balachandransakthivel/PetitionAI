@@ -2,7 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { TrendingUp, Brain, Copy, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 import { ANALYTICS_DATA } from "@/constants/mockData";
 
-const COLORS = ["#1e3a7b", "#2d4b8e", "#5c6ef7", "#8098fb", "#a5bcfd", "#c7d7fe", "#e0e9ff"];
+const COLORS = ["#5c6ef7", "#2d4b8e", "#5c6ef7", "#8098fb", "#a5bcfd", "#c7d7fe", "#e0e9ff"];
 const PIE_COLORS = ["#dc2626", "#ea580c", "#d97706", "#16a34a"];
 
 export default function AdminAnalytics() {
@@ -63,7 +63,7 @@ export default function AdminAnalytics() {
                 <XAxis type="number" tick={{ fontSize: 10 }} />
                 <YAxis dataKey="category" type="category" width={130} tick={{ fontSize: 10 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#1e3a7b" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="count" fill="#5c6ef7" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

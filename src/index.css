@@ -94,7 +94,7 @@
     @apply bg-card text-card-foreground rounded-3xl border border-border shadow-sm transition-all duration-200;
   }
   .card-base:hover {
-    @apply shadow-md -translate-y-0.5;
+    @apply shadow-md;
   }
 
   .card-premium {
@@ -171,5 +171,31 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+.recharts-cartesian-grid line {
+  stroke: hsl(var(--border));
+}
+.recharts-cartesian-axis-tick-value {
+  fill: hsl(var(--muted-foreground));
+}
+.recharts-default-tooltip {
+  background-color: hsl(var(--popover)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+.recharts-default-tooltip .recharts-tooltip-item,
+.recharts-default-tooltip .recharts-tooltip-label {
+  color: hsl(var(--foreground)) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -11,13 +11,13 @@ import SLABadge from "@/components/features/SLABadge";
 import { exportComplaintsToExcel } from "@/lib/excelExport";
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0 } },
 };
 
 export default function OfficerDashboard() {
@@ -61,11 +61,11 @@ export default function OfficerDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-background dark:to-background py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="mb-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
         >
           <div>
@@ -75,7 +75,7 @@ export default function OfficerDashboard() {
             </p>
           </div>
           <button onClick={() => exportComplaintsToExcel(filtered)}
-            className="inline-flex items-center gap-2 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-2.5 rounded-full hover:bg-emerald-100 transition-all font-medium active:scale-[0.98]">
+            className="inline-flex items-center gap-2 text-sm bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60 px-4 py-2.5 rounded-full hover:bg-emerald-100 transition-all font-medium active:scale-[0.98]">
             <FileSpreadsheet className="w-4 h-4" /> Export to Excel
           </button>
         </motion.div>
@@ -93,7 +93,7 @@ export default function OfficerDashboard() {
                 <div className="card-doppelrand-inner">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
-                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-lg transition-transform duration-200`}>
                       <s.icon className="w-4 h-4 text-white" />
                     </div>
                   </div>
@@ -106,9 +106,9 @@ export default function OfficerDashboard() {
 
         {/* Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
           className="card-doppelrand mb-6"
         >
           <div className="card-doppelrand-inner">
@@ -142,8 +142,8 @@ export default function OfficerDashboard() {
 
         {/* Complaints Table */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
           className="card-doppelrand overflow-hidden"
         >
@@ -159,24 +159,24 @@ export default function OfficerDashboard() {
                 filtered.map((c, i) => (
                   <motion.div
                     key={c.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + i * 0.02 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: i * 0.03 }}
                   >
                     <Link to={`/officer/petition/${c.id}`}
                       className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-6 py-4 hover:bg-muted/50 transition-colors group">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <span className="text-xs font-mono font-semibold text-navy-600 dark:text-gold-400">{c.petitionId}</span>
-                          {c.aiAnalysis.isDuplicate && <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-semibold">DUPLICATE</span>}
-                          {c.isEscalated && <span className="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold">ESCALATED</span>}
+                          {c.aiAnalysis.isDuplicate && <span className="text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 px-2 py-0.5 rounded-full font-semibold">DUPLICATE</span>}
+                          {c.isEscalated && <span className="text-[10px] bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300 px-2 py-0.5 rounded-full font-semibold">ESCALATED</span>}
                         </div>
-                        <p className="text-sm font-semibold text-foreground group-hover:text-navy-700 transition-colors">{c.title}</p>
+                        <p className="text-sm font-semibold text-foreground group-hover:text-navy-700 dark:group-hover:text-navy-300 transition-colors">{c.title}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{c.submittedByName} · {c.location} · {formatDate(c.submittedAt)}</p>
                       </div>
                       <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                         <SLABadge complaint={c} showDeadline={false} />
-                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-navy-50 text-navy-700 border border-navy-200/60">
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-navy-50 text-navy-700 border border-navy-200/60 dark:bg-navy-900/60 dark:text-navy-200 dark:border-navy-700/60">
                           {Math.round(c.aiAnalysis.categoryConfidence * 100)}% AI
                         </span>
                         <span className={cn("text-xs font-semibold px-2.5 py-1 rounded-full border", priorityClass(c.priority))}>{c.priority.toUpperCase()}</span>

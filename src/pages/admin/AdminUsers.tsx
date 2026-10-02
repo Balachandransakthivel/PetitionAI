@@ -116,7 +116,7 @@ export default function AdminUsers() {
             <div className="divide-y divide-border">
               {citizens.map(u => (
                 <div key={u.id} className="flex items-center gap-4 px-5 py-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950/40 rounded-full flex items-center justify-center text-blue-700 dark:text-blue-300 font-bold">
                     {u.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -126,7 +126,7 @@ export default function AdminUsers() {
                       {u.phone && <span className="flex items-center gap-1 text-xs text-muted-foreground"><Phone className="w-3 h-3" />{u.phone}</span>}
                     </div>
                   </div>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold uppercase">Citizen</span>
+                  <span className="text-xs bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full font-semibold uppercase">Citizen</span>
                 </div>
               ))}
             </div>
@@ -149,18 +149,18 @@ export default function AdminUsers() {
 
             {/* Add Officer Form */}
             {showAddOfficer && (
-              <div className="bg-navy-50 border-b border-border p-4">
+              <div className="bg-navy-50 border-b border-border p-4 dark:bg-gray-800/60">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-sm font-semibold text-foreground">New Officer</h4>
                   <button onClick={() => setShowAddOfficer(false)}><X className="w-4 h-4 text-muted-foreground" /></button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <input type="text" value={newOfficer.name} onChange={e => setNewOfficer({ ...newOfficer, name: e.target.value })}
-                    placeholder="Full Name" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+                    placeholder="Full Name" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:bg-gray-800/60 dark:text-foreground" />
                   <input type="email" value={newOfficer.email} onChange={e => setNewOfficer({ ...newOfficer, email: e.target.value })}
-                    placeholder="Email" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+                    placeholder="Email" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:bg-gray-800/60 dark:text-foreground" />
                   <select value={newOfficer.department} onChange={e => setNewOfficer({ ...newOfficer, department: e.target.value })}
-                    className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400">
+                    className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:bg-gray-800/60 dark:text-foreground">
                     <option value="">Select Department</option>
                     {departmentsList.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
                   </select>
@@ -174,14 +174,14 @@ export default function AdminUsers() {
             <div className="divide-y divide-border">
               {officersList.map(o => (
                 <div key={o.id} className="flex flex-col sm:flex-row sm:items-center gap-3 px-5 py-4">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold flex-shrink-0">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-950/40 rounded-full flex items-center justify-center text-purple-700 dark:text-purple-300 font-bold flex-shrink-0">
                     {o.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-foreground">{o.name}</p>
                     <div className="flex gap-3 mt-0.5 flex-wrap">
                       <span className="text-xs text-muted-foreground">{o.email}</span>
-                      <span className="text-xs text-purple-600 font-medium">{o.department}</span>
+                      <span className="text-xs text-purple-600 dark:text-purple-300 font-medium">{o.department}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 flex-shrink-0">
@@ -227,11 +227,11 @@ export default function AdminUsers() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <input type="text" value={newDept.name} onChange={e => setNewDept({ ...newDept, name: e.target.value })}
-                    placeholder="Department Name" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+                    placeholder="Department Name" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:bg-gray-800/60 dark:text-foreground" />
                   <input type="text" value={newDept.code} onChange={e => setNewDept({ ...newDept, code: e.target.value })}
-                    placeholder="Code (e.g. RNI)" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+                    placeholder="Code (e.g. RNI)" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:bg-gray-800/60 dark:text-foreground" />
                   <input type="text" value={newDept.head} onChange={e => setNewDept({ ...newDept, head: e.target.value })}
-                    placeholder="Department Head" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400" />
+                    placeholder="Department Head" className="border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-400 dark:bg-gray-800/60 dark:text-foreground" />
                 </div>
                 <button onClick={addDepartment} className="mt-3 bg-navy-800 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-navy-700 transition-colors flex items-center gap-1">
                   <Save className="w-3.5 h-3.5" /> Save Department
@@ -244,8 +244,8 @@ export default function AdminUsers() {
                 <div key={d.id} className="card-base p-5">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-navy-100 rounded-lg flex items-center justify-center">
-                        <Building2 className="w-4 h-4 text-navy-700" />
+                      <div className="w-8 h-8 bg-navy-100 dark:bg-navy-800 rounded-lg flex items-center justify-center">
+                        <Building2 className="w-4 h-4 text-navy-700 dark:text-navy-200" />
                       </div>
                       <div>
                         <p className="font-bold text-foreground text-sm">{d.name}</p>
@@ -276,7 +276,7 @@ export default function AdminUsers() {
                     <p className="text-xs text-muted-foreground mb-1">Handles</p>
                     <div className="flex flex-wrap gap-1">
                       {d.categories.map(c => (
-                        <span key={c} className="text-[10px] bg-navy-50 text-navy-700 border border-navy-200 px-1.5 py-0.5 rounded">{c}</span>
+                        <span key={c} className="text-[10px] bg-navy-50 text-navy-700 border border-navy-200 dark:bg-navy-800 dark:text-navy-200 dark:border-navy-700 px-1.5 py-0.5 rounded">{c}</span>
                       ))}
                     </div>
                   </div>

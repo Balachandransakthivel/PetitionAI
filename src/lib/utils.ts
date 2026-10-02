@@ -81,12 +81,12 @@ export function sentimentColor(sentiment: Sentiment): string {
 
 export function sentimentBg(sentiment: Sentiment): string {
   const map: Record<Sentiment, string> = {
-    positive: "bg-green-50 border-green-200",
-    neutral: "bg-blue-50 border-blue-200",
-    negative: "bg-orange-50 border-orange-200",
-    angry: "bg-red-50 border-red-200",
+    positive: "bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800/60",
+    neutral: "bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/60",
+    negative: "bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800/60",
+    angry: "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800/60",
   };
-  return map[sentiment] || "bg-gray-50 border-gray-200";
+  return map[sentiment] || "bg-gray-50 dark:bg-gray-800/60 border-gray-200 dark:border-gray-700";
 }
 
 export function generatePetitionId(): string {

@@ -29,13 +29,13 @@ const PRIORITY_FILTERS: { label: string; value: Priority | "all" }[] = [
 ];
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.03, delayChildren: 0 } },
 };
 
 export default function MyPetitions() {
@@ -76,11 +76,11 @@ export default function MyPetitions() {
   const activeFilters = [statusFilter !== "all", priorityFilter !== "all"].filter(Boolean).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-background dark:to-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
         >
@@ -95,7 +95,7 @@ export default function MyPetitions() {
 
         {/* Search & Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="card-doppelrand mb-6"
@@ -180,7 +180,7 @@ export default function MyPetitions() {
                               "text-xs px-3.5 py-1.5 rounded-full border font-medium transition-all duration-300",
                               priorityFilter === f.value
                                 ? "bg-navy-800 dark:bg-gold-500 text-white dark:text-navy-950 border-navy-800 dark:border-gold-500 shadow-md"
-                                : "bg-card text-muted-foreground border-border hover:border-navy-300 hover:text-navy-700"
+                                : "bg-card text-muted-foreground border-border hover:border-navy-300 hover:text-navy-700 dark:hover:text-navy-300"
                             )}
                           >
                             {f.label}
@@ -212,7 +212,7 @@ export default function MyPetitions() {
                             "text-xs px-3.5 py-1.5 rounded-full border font-medium transition-all duration-300 flex items-center gap-1.5",
                             sortBy === "priority"
                               ? "bg-navy-800 text-white border-navy-800"
-                              : "bg-white text-muted-foreground border-gray-200 hover:border-navy-300"
+                              : "bg-card text-muted-foreground border-gray-200 dark:border-gray-700 hover:border-navy-300 dark:hover:border-navy-600"
                           )}
                         >
                           <ArrowUpDown className="w-3 h-3" /> Priority

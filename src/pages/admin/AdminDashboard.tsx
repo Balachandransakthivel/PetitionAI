@@ -9,13 +9,13 @@ import { cn, statusClass, statusLabel, priorityClass, formatDate } from "@/lib/u
 import ComplaintMap from "@/components/features/ComplaintMap";
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] } },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.04, delayChildren: 0 } },
 };
 
 export default function AdminDashboard() {
@@ -33,11 +33,11 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-background dark:to-background py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
           <div>
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
                 <div className="card-doppelrand-inner">
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-sm text-muted-foreground font-medium">{s.label}</p>
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.gradient} flex items-center justify-center shadow-lg transition-transform duration-200`}>
                       <s.icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
@@ -81,9 +81,9 @@ export default function AdminDashboard() {
 
         {/* Map */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
           className="mb-8"
         >
           <ComplaintMap complaints={complaints} height="350px" />
@@ -92,9 +92,9 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           {/* Critical Complaints */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
             className="lg:col-span-2 card-doppelrand overflow-hidden"
           >
             <div className="card-doppelrand-inner !p-0 overflow-hidden">
@@ -105,18 +105,18 @@ export default function AdminDashboard() {
                 </div>
                 <Link to="/admin/complaints" className="text-red-200 hover:text-white text-xs flex items-center gap-1 font-medium">View all <ArrowRight className="w-3 h-3" /></Link>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
                 {critical.length === 0 ? (
                   <div className="p-8 text-center text-sm text-muted-foreground">No critical complaints.</div>
                 ) : (
                   critical.slice(0, 5).map((c, i) => (
                     <motion.div
                       key={c.id}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + i * 0.05 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: i * 0.03 }}
                     >
-                      <Link to={`/admin/complaint/${c.id}`} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-all">
+                      <Link to={`/admin/complaint/${c.id}`} className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-all">
                         <div>
                           <p className="text-sm font-semibold text-foreground">{c.title}</p>
                           <p className="text-xs text-muted-foreground">{c.petitionId} · {c.assignedDepartment}</p>
@@ -132,9 +132,9 @@ export default function AdminDashboard() {
 
           {/* Department Overview */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
             className="card-doppelrand overflow-hidden"
           >
             <div className="card-doppelrand-inner !p-0 overflow-hidden">
@@ -142,12 +142,12 @@ export default function AdminDashboard() {
                 <Building2 className="w-4 h-4" />
                 <span className="font-display font-bold text-sm">Departments</span>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
                 {DEPARTMENTS.slice(0, 5).map(d => (
                   <div key={d.id} className="px-5 py-3.5">
                     <div className="flex justify-between items-center mb-1.5">
                       <p className="text-xs font-semibold text-foreground truncate">{d.name}</p>
-                      <span className="text-xs font-bold text-navy-700">{d.code}</span>
+                      <span className="text-xs font-bold text-navy-700 dark:text-navy-300">{d.code}</span>
                     </div>
                     <div className="flex gap-3 text-xs text-muted-foreground">
                       <span className="text-amber-600 font-medium">{d.pendingCount} pending</span>
@@ -164,9 +164,9 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Officers */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.25 }}
             className="card-doppelrand overflow-hidden"
           >
             <div className="card-doppelrand-inner !p-0 overflow-hidden">
@@ -177,7 +177,7 @@ export default function AdminDashboard() {
                 </div>
                 <Link to="/admin/users" className="text-navy-300 hover:text-white text-xs flex items-center gap-1 font-medium">Manage <ArrowRight className="w-3 h-3" /></Link>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
                 {OFFICERS.map(o => (
                   <div key={o.id} className="flex items-center gap-3 px-5 py-3.5">
                     <div className="w-9 h-9 bg-gradient-to-br from-navy-100 to-navy-200 rounded-xl flex items-center justify-center text-navy-700 font-bold text-sm flex-shrink-0">
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
                       <p className="text-xs text-muted-foreground truncate">{o.department}</p>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-xs font-bold text-navy-700">{o.assignedCount} active</p>
+                      <p className="text-xs font-bold text-navy-700 dark:text-navy-300">{o.assignedCount} active</p>
                       <p className="text-[10px] text-muted-foreground">{o.resolvedCount} resolved</p>
                     </div>
                   </div>
@@ -199,9 +199,9 @@ export default function AdminDashboard() {
 
           {/* Recent Complaints */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
             className="card-doppelrand overflow-hidden"
           >
             <div className="card-doppelrand-inner !p-0 overflow-hidden">
@@ -209,15 +209,15 @@ export default function AdminDashboard() {
                 <span className="font-display font-bold text-sm">Recent Petitions</span>
                 <Link to="/admin/complaints" className="text-navy-300 hover:text-white text-xs flex items-center gap-1 font-medium">All <ArrowRight className="w-3 h-3" /></Link>
               </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 dark:divide-gray-800">
                 {complaints.slice(0, 5).map((c, i) => (
                   <motion.div
                     key={c.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.8 + i * 0.05 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: i * 0.03 }}
                   >
-                    <Link to={`/admin/complaint/${c.id}`} className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-all">
+                    <Link to={`/admin/complaint/${c.id}`} className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-all">
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground truncate">{c.title}</p>
                         <div className="flex items-center gap-2 mt-0.5">
